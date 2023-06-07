@@ -70,7 +70,6 @@ public abstract class Command {
 				cmd = new FileUploadCommand();
 				break;
 			}default: {
-				System.out.println("Command not found!");
 				return null;
 			}
 		}

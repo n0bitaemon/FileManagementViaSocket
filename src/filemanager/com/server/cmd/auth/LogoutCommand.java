@@ -7,13 +7,13 @@ public class LogoutCommand extends Command {
 	@Override
 	public boolean exec() {
 		System.out.println("Logout exec()");
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean validate() {
 		System.out.println("Logout validate()");
-		return false;
+		return true;
 	}
 
 }

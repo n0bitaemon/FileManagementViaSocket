@@ -7,58 +7,54 @@ import java.nio.channels.SocketChannel;
 import java.util.Scanner;
 
 public class Client {
-	private static SocketChannel client;
-    private static ByteBuffer buffer;
-    private static Client instance;
-
-    public static Client start() {
-        if (instance == null)
-            instance = new Client();
-
-        return instance;
-    }
-
-    public static void stop() throws IOException {
-        client.close();
-        buffer = null;
+    
+    private ByteBuffer buffer;
+    private SocketChannel socketChannel;
+    
+    public Client(String host, int port) throws IOException {
+        buffer = ByteBuffer.allocate(1024);
+        socketChannel = SocketChannel.open();
+        socketChannel.connect(new InetSocketAddress(host, port));
+        System.out.println("Connected to server at " + host + ":" + port);
     }
     
-    private Client() {
-        try {
-            client = SocketChannel.open(new InetSocketAddress("localhost", 3000));
-            buffer = ByteBuffer.allocate(256);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    public String sendMessage(String msg) {
-        buffer = ByteBuffer.wrap(msg.getBytes());
-        String response = null;
-        try {
-            client.write(buffer);
-            buffer.clear();
-            client.read(buffer);
-            response = new String(buffer.array()).trim();
-            System.out.println("response=" + response);
-            buffer.clear();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public String send(String message) throws IOException {
+    	// Send request
+        buffer.clear();
+        buffer.put(message.getBytes());
+        buffer.flip();
+        socketChannel.write(buffer);
+        System.out.println(">>> " + message);
+        buffer.clear();
+        
+        // Read response
+        int numBytes = socketChannel.read(buffer);
+        String response = new String(buffer.array(), 0, numBytes).trim();
         return response;
     }
     
-    public static void main(String[] args) {
-		Client client = Client.start();
-		Scanner sc = new Scanner(System.in);
-		
-		while(true) {
-			String s = sc.nextLine();
-			if(s.equalsIgnoreCase("exit"))
-				break;
-			client.sendMessage(s);
-		}
-		
-		sc.close();
-	}
+    public void close() throws IOException {
+        socketChannel.close();
+    }
+    
+    public static void main(String[] args) throws IOException {
+        String host = "localhost";
+        int port = 3000;
+        Client client = new Client(host, port);
+        Scanner sc = new Scanner(System.in);
+        String cmd;
+        String res = null;
+        
+        while(true) {
+        	cmd = sc.nextLine();
+        	res = client.send(cmd);
+            System.out.println(res);
+            if(res.equalsIgnoreCase("exit")) {
+            	break;
+            }
+        }
+        
+        sc.close();
+        
+    }
 }

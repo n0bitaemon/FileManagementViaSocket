@@ -7,13 +7,13 @@ public class FileUploadCommand extends Command {
 	@Override
 	public boolean exec() {
 		System.out.println("File upload exec()");
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean validate() {
 		System.out.println("File upload validate()");
-		return false;
+		return true;
 	}
 
 }

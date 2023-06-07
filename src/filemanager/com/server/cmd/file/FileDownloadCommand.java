@@ -7,13 +7,13 @@ public class FileDownloadCommand extends Command {
 	@Override
 	public boolean exec() {
 		System.out.println("File Download exec()");
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean validate() {
 		System.out.println("File download validate()");
-		return false;
+		return true;
 	}
 
 }

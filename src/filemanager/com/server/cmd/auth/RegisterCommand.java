@@ -8,14 +8,14 @@ public class RegisterCommand extends Command {
 	public boolean exec() {
 		// TODO Auto-generated method stub
 		System.out.println("Register exec()");
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean validate() {
 		// TODO Auto-generated method stub
 		System.out.println("Register validate()");
-		return false;
+		return true;
 	}
 
 }

@@ -2,6 +2,7 @@ package filemanager.com.server.cmd.auth;
 
 import java.util.List;
 
+import filemanager.com.server.auth.Authentication;
 import filemanager.com.server.cmd.Command;
 
 public class LoginCommand extends Command{
@@ -23,7 +24,8 @@ public class LoginCommand extends Command{
 
 	public boolean exec() {
 		System.out.println("Login exec()");
-		return false;
+		Authentication.login(getArgs().get(0), getArgs().get(1));
+		return true;
 	}
 
 
