@@ -91,22 +91,27 @@ public class Server {
     }
     
     private String getResponse(String req) {
-    	String res = null;
     	Command cmd = Command.parseCommandFromString(req);
+    	Response res = new Response();
         if(cmd != null) {
-        	if(cmd.validate()) {
-            	if(cmd.exec()) {
-            		res = "The command is executed!";
-            	}else {
-            		res = "An error occured while executing the command!";
-            	}
-            }else {
-            	res = "The command is not valid!";
-            }
+        	try {
+        		res = cmd.validate();
+        		if(!res.isStatus()) {
+        			return res.getMessage();
+        		}
+        		res = cmd.exec();
+        		if(!res.isStatus()) {
+        			return res.getMessage();
+        		}
+        	}catch (Exception e) {
+        		e.printStackTrace();
+        		return "Unexpected error!";
+			}
         }else {
-        	res = "Command not found!";
+        	return "Command not found!";
         }
-        return res;
+        
+		return "Command is executed!";
     }
     
     public static void main(String[] args) throws IOException {

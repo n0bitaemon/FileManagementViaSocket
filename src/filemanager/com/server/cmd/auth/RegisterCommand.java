@@ -1,21 +1,23 @@
 package filemanager.com.server.cmd.auth;
 
+import filemanager.com.server.Response;
 import filemanager.com.server.cmd.Command;
 
 public class RegisterCommand extends Command {
 
 	@Override
-	public boolean exec() {
+	public Response validate() {
 		// TODO Auto-generated method stub
-		System.out.println("Register exec()");
-		return true;
+		System.out.println("[SERVER LOG] REGISTER VALIDATION");
+		return null;
+	}
+	
+	@Override
+	public Response exec() {
+		// TODO Auto-generated method stub
+		System.out.println("[SERVER LOG] REGISTER EXECUTION");
+		return null;
 	}
 
-	@Override
-	public boolean validate() {
-		// TODO Auto-generated method stub
-		System.out.println("Register validate()");
-		return true;
-	}
 
 }
