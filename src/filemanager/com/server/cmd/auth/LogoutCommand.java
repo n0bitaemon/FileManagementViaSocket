@@ -1,18 +1,17 @@
 package filemanager.com.server.cmd.auth;
 
-import filemanager.com.server.Response;
 import filemanager.com.server.cmd.Command;
 
 public class LogoutCommand extends Command {
 
 	@Override
-	public Response validate() {
+	public String validate() {
 		System.out.println("[SERVER LOG] LOGOUT VALIDATION");
 		return null;
 	}
 	
 	@Override
-	public Response exec() {
+	public String exec() {
 		System.out.println("[SERVER LOG] LOGOUT EXECUTION");
 		return null;
 	}

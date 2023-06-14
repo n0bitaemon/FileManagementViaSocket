@@ -92,26 +92,19 @@ public class Server {
     
     private String getResponse(String req) {
     	Command cmd = Command.parseCommandFromString(req);
-    	Response res;
         if(cmd != null) {
-        	try {
-        		res = cmd.validate();
-        		if(!res.isStatus()) {
-        			return res.getMessage();
-        		}
-        		res = cmd.exec();
-        		if(!res.isStatus()) {
-        			return res.getMessage();
-        		}
-        	}catch (Exception e) {
-        		e.printStackTrace();
-        		return "Unexpected error!";
-			}
+        	// Only return validateResponse if there is an error in validation step
+    		String validateResponse = cmd.validate();
+    		if(!validateResponse.equals("Success")) {
+    			return validateResponse;
+    		}
+    		
+    		// Always return execResponse
+    		String execResponse = cmd.exec();
+    		return execResponse;
         }else {
         	return "Command not found!";
         }
-        
-		return "Command is executed!";
     }
     
     public static void main(String[] args) throws IOException {
