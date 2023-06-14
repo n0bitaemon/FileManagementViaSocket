@@ -38,7 +38,6 @@ public abstract class Command {
 	
 	public abstract Response exec();
 	
-	
 	public static Command parseCommandFromString(String msg) {
 		//Analyze msg and detect cmd type
 		String msg_arr[] = msg.split(" ");

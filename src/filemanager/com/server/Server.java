@@ -92,7 +92,7 @@ public class Server {
     
     private String getResponse(String req) {
     	Command cmd = Command.parseCommandFromString(req);
-    	Response res = new Response();
+    	Response res;
         if(cmd != null) {
         	try {
         		res = cmd.validate();
