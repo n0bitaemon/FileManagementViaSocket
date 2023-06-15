@@ -47,7 +47,6 @@ public class ListFileCommand extends Command {
 		StringBuilder filesResponse = new StringBuilder();
 		
 		List<Path> files = new ArrayList<>();
-		System.out.println("Before try");
 		try {
 			DirectoryStream<Path> stream = Files.newDirectoryStream(absoluteDirPath);
 			for(Path entry : stream) {
