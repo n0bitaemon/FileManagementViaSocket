@@ -8,7 +8,9 @@ public class Constants {
 	public static final String FILE_DOWNLOAD_CMD = "download";
 	public static final String FILE_DELETE_CMD = "rm";
 	public static final String FILE_MOVE_CMD = "mv";
+	public static final String FILE_COPY_CMD = "cp";
 	public static final String DIR_MAKE_CMD = "mkdir";
+	public static final String DIR_LIST_FILE = "ls";
 	
 	public static final String APP_DIR = System.getProperty("user.dir");
 	public static final String STORAGE_DIR = APP_DIR + "/storage";

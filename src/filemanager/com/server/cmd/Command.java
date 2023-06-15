@@ -6,11 +6,13 @@ import java.util.List;
 import filemanager.com.server.cmd.auth.LoginCommand;
 import filemanager.com.server.cmd.auth.LogoutCommand;
 import filemanager.com.server.cmd.auth.RegisterCommand;
-import filemanager.com.server.cmd.dir.MakeDirCommand;
+import filemanager.com.server.cmd.file.FileCopyCommand;
 import filemanager.com.server.cmd.file.FileDeleteCommand;
 import filemanager.com.server.cmd.file.FileDownloadCommand;
 import filemanager.com.server.cmd.file.FileMoveCommand;
 import filemanager.com.server.cmd.file.FileUploadCommand;
+import filemanager.com.server.cmd.file.ListFileCommand;
+import filemanager.com.server.cmd.file.MakeDirCommand;
 import filemanager.com.server.common.Constants;
 
 public abstract class Command {
@@ -40,7 +42,7 @@ public abstract class Command {
 		Command cmd;
 		
 		String cmd_name = msg_arr[0];
-		switch (cmd_name.toLowerCase()) {
+		switch (cmd_name) {
 			case Constants.AUTH_LOGIN_CMD: {
 				cmd = new LoginCommand();
 				break;
@@ -62,8 +64,14 @@ public abstract class Command {
 			}case Constants.FILE_MOVE_CMD: {
 				cmd = new FileMoveCommand();
 				break;
+			}case Constants.FILE_COPY_CMD: {
+				cmd = new FileCopyCommand();
+				break;
 			}case Constants.DIR_MAKE_CMD: {
 				cmd = new MakeDirCommand();
+				break;
+			}case Constants.DIR_LIST_FILE: {
+				cmd = new ListFileCommand();
 				break;
 			}default: {
 				return null;

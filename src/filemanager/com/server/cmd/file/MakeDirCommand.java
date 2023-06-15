@@ -1,4 +1,4 @@
-package filemanager.com.server.cmd.dir;
+package filemanager.com.server.cmd.file;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,6 +31,9 @@ public class MakeDirCommand extends Command {
 	public String validate() {
 		if(!Utils.validateNumberOfArgs(getArgs(), 1)) {
 			return String.format("Invalid number of arguments! Expected 1 but %d was given\n", getArgs().size());
+		}
+		if(Files.exists(absoluteDirPath)) {
+			return "Directory is already exist!";
 		}
 		return Constants.RESPONSE_SUCCESS_MSG;
 	}

@@ -10,11 +10,11 @@ import filemanager.com.server.cmd.Command;
 import filemanager.com.server.common.Constants;
 import filemanager.com.server.common.Utils;
 
-public class FileMoveCommand extends Command {
+public class FileCopyCommand extends Command {
 	private Path absoluteOldPath;
 	private Path absoluteNewPath;
 	
-	public FileMoveCommand() {
+	public FileCopyCommand() {
 	}
 	
 	public Path getAbsoluteOldPath() {
@@ -60,7 +60,7 @@ public class FileMoveCommand extends Command {
 				System.out.println("Directory not exist, created");
 			}
 			
-			Files.move(absoluteOldPath, absoluteNewPath);
+			Files.copy(absoluteOldPath, absoluteNewPath);
 		} catch (IOException e) {
 			return Constants.ERROR_UNEXPECTED;
 		}

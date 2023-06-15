@@ -34,12 +34,6 @@ public class FileDeleteCommand extends Command{
 		if(!Files.exists(absoluteFilePath)) {
 			return "File not found";
 		}
-		try {
-			Files.delete(absoluteFilePath);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			return Constants.ERROR_UNEXPECTED;
-		}
 		
 		// Checking for credentials
 		
@@ -48,6 +42,13 @@ public class FileDeleteCommand extends Command{
 
 	public String exec() {
 		System.out.println("[SERVER LOG] FILE DELETION EXECUTION");
+
+		try {
+			Files.delete(absoluteFilePath);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			return Constants.ERROR_UNEXPECTED;
+		}
 		
 		return Constants.RESPONSE_SUCCESS_MSG;
 	}
