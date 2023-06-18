@@ -4,50 +4,90 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 import filemanager.com.server.cmd.Command;
+import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.common.Constants;
+import filemanager.com.server.common.Environments;
 import filemanager.com.server.common.Utils;
 
 public class FileCopyCommand extends Command {
-	private Path absoluteOldPath;
-	private Path absoluteNewPath;
+	private Path oldPath;
+	private Path newPath;
 	
 	public FileCopyCommand() {
 	}
 	
-	public Path getAbsoluteOldPath() {
-		return absoluteOldPath;
+	public Path getOldPath() {
+		return oldPath;
 	}
 
-	public Path getAbsoluteNewPath() {
-		return absoluteNewPath;
+	public void setOldPath(Path oldPath) {
+		this.oldPath = oldPath;
 	}
-	
-	public void setArgs(List<String> args) {
-		super.setArgs(args);
-		setAbsolutePaths(getArgs().get(0), getArgs().get(1));
+
+	public Path getNewPath() {
+		return newPath;
 	}
-	
-	public void setAbsolutePaths(String relativeOldPath, String relativeNewPath) {
-		absoluteOldPath = Paths.get(Constants.STORAGE_DIR + "/" + tempUser + "/" + relativeOldPath).toAbsolutePath();
-		absoluteNewPath = Paths.get(Constants.STORAGE_DIR + "/" + tempUser + "/" + relativeNewPath).toAbsolutePath();
-		System.out.println("absoluteOldPath: " + absoluteOldPath);
-		System.out.println("absoluteNewPath: " + absoluteNewPath);
+
+	public void setNewPath(Path newPath) {
+		this.newPath = newPath;
 	}
 
 	@Override
 	public String validate() {
-		if(!Utils.validateNumberOfArgs(getArgs(), 2)) {
+		if(!Validator.validateNumberOfArgs(getArgs(), 2)) {
 			return String.format("Invalid number of arguments! Expected 2 but %d was given\n", getArgs().size());
 		}
-		if(!Files.exists(absoluteOldPath)) {
-			return String.format("File not found: %s", absoluteOldPath);
+		
+		// Set temporary file path by user input
+		String tempOldPath = getArgs().get(0);
+		String tempNewPath = getArgs().get(1);
+		
+		// Set canonical old file path
+		String canonicalOldFilePath;
+		try {
+			 canonicalOldFilePath = Utils.getCanonicalFilePath(tempOldPath, tempUser);
+		} catch (IOException e) {
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
+			return String.format("Invalid file path: %s", tempOldPath);
 		}
-		if(Files.exists(absoluteNewPath)) {
-			return String.format("File is already exist: %s", absoluteNewPath);
+
+		// Set canonical new file path
+		String canonicalNewFilePath;
+		try {
+			 canonicalNewFilePath = Utils.getCanonicalFilePath(tempNewPath, tempUser);
+		} catch (IOException e) {
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
+			return String.format("Invalid file path: %s", tempNewPath);
 		}
+		
+		// Check permission of user
+		if(!Validator.checkPermission(canonicalOldFilePath, tempUser)) {
+			return String.format("No permission to path: %s", tempOldPath);
+		}
+		if(!Validator.checkPermission(canonicalNewFilePath, tempUser)) {
+			return String.format("No permission to path: %s", tempNewPath);
+		}
+		
+		// Set up valid path property
+		Path canonicalOldFile = Paths.get(canonicalOldFilePath);
+		Path canonicalNewFile = Paths.get(canonicalNewFilePath);
+		setOldPath(canonicalOldFile);
+		setNewPath(canonicalNewFile);
+		
+		if(!Files.exists(getOldPath())) {
+			return String.format("File not found: %s", getOldPath());
+		}
+		
+		if(Files.exists(getNewPath())) {
+			return String.format("File is already exist: %s", getNewPath());
+		}
+		
 		return Constants.RESPONSE_SUCCESS_MSG;
 	}
 
@@ -55,17 +95,22 @@ public class FileCopyCommand extends Command {
 	public String exec() {
 		try {
 			//If directory not exist, make dir
-			if(!Files.exists(absoluteNewPath.getParent())) {
-				Files.createDirectories(absoluteNewPath);
-				System.out.println("Directory not exist, created");
+			Path parentFolder = getNewPath().getParent();
+			if(!Files.exists(parentFolder)) {
+				Files.createDirectories(parentFolder);
 			}
 			
-			Files.copy(absoluteOldPath, absoluteNewPath);
+			Files.copy(getOldPath(), getNewPath());
 		} catch (IOException e) {
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
 			return Constants.ERROR_UNEXPECTED;
 		}
 		
-		return Constants.RESPONSE_SUCCESS_MSG;
+		String relativeOldPath = getOldPath().toString().replace(Constants.STORAGE_DIR + tempUser, "");
+		String relativeNewPath = getNewPath().toString().replace(Constants.STORAGE_DIR + tempUser, "");
+		return String.format("Copied %s to %s", relativeOldPath, relativeNewPath);
 	}
 
 }

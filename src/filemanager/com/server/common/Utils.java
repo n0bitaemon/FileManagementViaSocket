@@ -1,8 +1,9 @@
 package filemanager.com.server.common;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 public class Utils {
 	public static boolean validateFilePath(String filePath) {
@@ -11,7 +12,11 @@ public class Utils {
 		return isValid;
 	}
 	
-	public static boolean validateNumberOfArgs(List<String> args, int validNum) {
-		return args.size() == validNum;
+	public static String getCanonicalFilePath(String path, String userDir) throws IOException {
+		String userFolder = Constants.STORAGE_DIR + userDir;
+		File file = new File(userFolder, path);
+		return file.getCanonicalFile().toString();
 	}
+	
+	
 }

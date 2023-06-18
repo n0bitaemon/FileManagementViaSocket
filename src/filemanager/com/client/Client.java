@@ -25,9 +25,9 @@ public class Client {
         buffer.flip();
         socketChannel.write(buffer);
         System.out.println(">>> " + message);
-        buffer.clear();
         
         // Read response
+        buffer.clear();
         int numBytes = socketChannel.read(buffer);
         String response = new String(buffer.array(), 0, numBytes).trim();
         return response;

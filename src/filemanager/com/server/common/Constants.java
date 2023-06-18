@@ -12,8 +12,9 @@ public class Constants {
 	public static final String DIR_MAKE_CMD = "mkdir";
 	public static final String DIR_LIST_FILE = "ls";
 	
+	public static final String FILE_SEPARATOR = System.getProperty("file.separator");
 	public static final String APP_DIR = System.getProperty("user.dir");
-	public static final String STORAGE_DIR = APP_DIR + "/storage";
+	public static final String STORAGE_DIR = APP_DIR + FILE_SEPARATOR + "storage" + FILE_SEPARATOR;
 	
 	public static final String RESPONSE_SUCCESS_MSG = "Success";
 	

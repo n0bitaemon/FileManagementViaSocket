@@ -10,6 +10,8 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 
 import filemanager.com.server.cmd.Command;
+import filemanager.com.server.common.Constants;
+import filemanager.com.server.common.Environments;
 
 public class Server {
     
@@ -47,29 +49,53 @@ public class Server {
         }
     }
     
-    private void accept(SelectionKey key) throws IOException {
+    private void accept(SelectionKey key) {
         ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
-        SocketChannel socketChannel = serverSocketChannel.accept();
-        socketChannel.configureBlocking(false);
-        socketChannel.register(selector, SelectionKey.OP_READ);
-        System.out.println("New client connected: " + socketChannel.getRemoteAddress());
+        try {
+            SocketChannel socketChannel;
+            socketChannel = serverSocketChannel.accept();
+            socketChannel.configureBlocking(false);
+            socketChannel.register(selector, SelectionKey.OP_READ);
+            System.out.println("New client connected: " + socketChannel.getRemoteAddress());
+        }catch (IOException e) {
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
+			System.out.println("[ERROR] Cannot accept client");
+		}
     }
     
-    private void read(SelectionKey key) throws IOException {
+    private void read(SelectionKey key) {
         SocketChannel socketChannel = (SocketChannel) key.channel();
         buffer.clear();
-        int numBytes = socketChannel.read(buffer);
-        if (numBytes == -1) {
-            disconnect(key);
-            return;
-        }
+
+        String remoteAddress = null;
+        int numBytes = 0;
+        
+        System.out.println("Buffer content: " + buffer.toString());
+        
+        try {
+        	numBytes = socketChannel.read(buffer);
+            if (numBytes == -1) {
+                disconnect(key);
+                return;
+            }
+        	remoteAddress = socketChannel.getRemoteAddress().toString();
+        }catch (Exception e) {
+        	System.err.println("[ERROR] Cannot read buffer");
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
+		}
+        
         String request = new String(buffer.array(), 0, numBytes).trim();
-        System.out.println("Received request from " + socketChannel.getRemoteAddress() + ": " + request);
+        
+        System.out.println("Received request from " + remoteAddress + ": " + request);
         key.interestOps(SelectionKey.OP_WRITE);
         key.attach(request);
     }
     
-    private void write(SelectionKey key) throws IOException {
+    private void write(SelectionKey key) {
         SocketChannel socketChannel = (SocketChannel) key.channel();
         String req = (String) key.attachment();
         String res = getResponse(req);
@@ -77,10 +103,20 @@ public class Server {
         buffer.clear();
         buffer.put(res.getBytes());
         buffer.flip();
-        socketChannel.write(buffer);
+        
+        String remoteAddress = null;
+        try {
+            socketChannel.write(buffer);
+            remoteAddress = socketChannel.getRemoteAddress().toString();
+        }catch (IOException e) {
+        	System.err.println("[ERROR] Cannot write to buffer");
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
+		}
         
         key.interestOps(SelectionKey.OP_READ);
-        System.out.println("Sent response to " + socketChannel.getRemoteAddress() + ": " + res);
+        System.out.println("Sent response to " + remoteAddress + ": " + res);
     }
     
     private void disconnect(SelectionKey key) throws IOException {
@@ -95,7 +131,7 @@ public class Server {
         if(cmd != null) {
         	// Only return validateResponse if there is an error in validation step
     		String validateResponse = cmd.validate();
-    		if(!validateResponse.equals("Success")) {
+    		if(!validateResponse.equals(Constants.RESPONSE_SUCCESS_MSG)) {
     			return validateResponse;
     		}
     		
@@ -107,9 +143,17 @@ public class Server {
         }
     }
     
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         int port = 3000;
-        Server server = new Server(port);
-        server.start();
+        Server server;
+		try {
+			server = new Server(port);
+	        server.start();
+		} catch (IOException e) {
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
+			System.err.println("[ERR]: Cannot start server");
+		}
     }
 }
