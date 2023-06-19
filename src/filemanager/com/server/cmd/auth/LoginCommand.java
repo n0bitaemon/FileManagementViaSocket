@@ -7,7 +7,7 @@ import filemanager.com.server.cmd.Command;
 public class LoginCommand extends Command{
 	public static final int NUMBER_OF_ARGS = 2;
 	
-	public String validate() {
+	public boolean validate() {
 		System.out.println("[SERVER LOG] LOGIN VALIDATION");
 		List<String> args = getArgs();
 		
@@ -18,7 +18,7 @@ public class LoginCommand extends Command{
 		
 		//Checking for credentials
 		
-		return "Success";
+		return true;
 	}
 
 	public String exec() {

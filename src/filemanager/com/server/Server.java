@@ -12,6 +12,7 @@ import java.util.Iterator;
 import filemanager.com.server.cmd.Command;
 import filemanager.com.server.common.Constants;
 import filemanager.com.server.common.Environments;
+import filemanager.com.server.exception.ServerException;
 
 public class Server {
     
@@ -130,13 +131,20 @@ public class Server {
     	Command cmd = Command.parseCommandFromString(req);
         if(cmd != null) {
         	// Only return validateResponse if there is an error in validation step
-    		String validateResponse = cmd.validate();
-    		if(!validateResponse.equals(Constants.RESPONSE_SUCCESS_MSG)) {
-    			return validateResponse;
-    		}
+        	boolean isValid = false;
+        	try {
+				isValid = cmd.validate();
+			} catch (ServerException e) {
+				return e.getMessage();
+			}
     		
     		// Always return execResponse
-    		String execResponse = cmd.exec();
+    		String execResponse;
+			try {
+				execResponse = cmd.exec();
+			} catch (ServerException e) {
+				return e.getMessage();
+			}
     		return execResponse;
         }else {
         	return "Command not found!";

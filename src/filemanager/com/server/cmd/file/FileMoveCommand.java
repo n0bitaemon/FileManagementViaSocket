@@ -10,6 +10,12 @@ import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.common.Constants;
 import filemanager.com.server.common.Environments;
 import filemanager.com.server.common.Utils;
+import filemanager.com.server.exception.FileAlreadyExistException;
+import filemanager.com.server.exception.FileNotFoundException;
+import filemanager.com.server.exception.InvalidNumberOfArgsException;
+import filemanager.com.server.exception.InvalidPathException;
+import filemanager.com.server.exception.NoPermissionException;
+import filemanager.com.server.exception.ServerException;
 
 public class FileMoveCommand extends Command {
 	private Path oldPath;
@@ -32,9 +38,9 @@ public class FileMoveCommand extends Command {
 	}
 
 	@Override
-	public String validate() {
+	public boolean validate() throws ServerException {
 		if(!Validator.validateNumberOfArgs(getArgs(), 2)) {
-			return String.format("Invalid number of arguments! Expected 2 but %d was given\n", getArgs().size());
+			throw new InvalidNumberOfArgsException(2, getArgs().size());
 		}
 		
 		// Set temporary file path by user input
@@ -49,7 +55,7 @@ public class FileMoveCommand extends Command {
 			if(Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
-			return String.format("Invalid file path: %s", tempOldPath);
+			throw new InvalidPathException(tempOldPath);
 		}
 
 		// Set canonical new file path
@@ -60,15 +66,15 @@ public class FileMoveCommand extends Command {
 			if(Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
-			return String.format("Invalid file path: %s", tempNewPath);
+			throw new InvalidPathException(tempNewPath);
 		}
 		
 		// Check permission of user
 		if(!Validator.checkPermission(canonicalOldFilePath, tempUser)) {
-			return String.format("No permission to path: %s", tempOldPath);
+			throw new NoPermissionException(tempOldPath);
 		}
 		if(!Validator.checkPermission(canonicalNewFilePath, tempUser)) {
-			return String.format("No permission to path: %s", tempNewPath);
+			throw new NoPermissionException(tempNewPath);
 		}
 		
 		// Set up valid path property
@@ -79,17 +85,17 @@ public class FileMoveCommand extends Command {
 		
 		
 		if(!Files.exists(getOldPath())) {
-			return String.format("File not found: %s", getOldPath());
+			throw new FileNotFoundException(tempOldPath);
 		}
 		
 		if(Files.exists(getNewPath())) {
-			return String.format("File is already exist: %s", canonicalNewFilePath);
+			throw new FileAlreadyExistException(tempNewPath);
 		}
-		return Constants.RESPONSE_SUCCESS_MSG;
+		return true;
 	}
 
 	@Override
-	public String exec() {
+	public String exec() throws ServerException {
 		try {
 			//If directory not exist, make dir
 			if(!Files.exists(getNewPath().getParent())) {
@@ -99,12 +105,15 @@ public class FileMoveCommand extends Command {
 			
 			Files.move(getOldPath(), getNewPath());
 		} catch (IOException e) {
-			return Constants.ERROR_UNEXPECTED;
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
+			throw new ServerException();
 		}
 		
 		String relativeOldPath = getOldPath().toString().replace(Constants.STORAGE_DIR + tempUser, "");
 		String relativeNewPath = getNewPath().toString().replace(Constants.STORAGE_DIR + tempUser, "");
-		return String.format("Moved %s to %s", relativeOldPath, relativeNewPath);
+		return String.format("Moved: %s => %s", relativeOldPath, relativeNewPath);
 	}
 
 }

@@ -5,9 +5,9 @@ import filemanager.com.server.cmd.Command;
 public class LogoutCommand extends Command {
 
 	@Override
-	public String validate() {
+	public boolean validate() {
 		System.out.println("[SERVER LOG] LOGOUT VALIDATION");
-		return null;
+		return true;
 	}
 	
 	@Override

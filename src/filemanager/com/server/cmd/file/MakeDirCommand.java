@@ -10,6 +10,11 @@ import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.common.Constants;
 import filemanager.com.server.common.Environments;
 import filemanager.com.server.common.Utils;
+import filemanager.com.server.exception.FileAlreadyExistException;
+import filemanager.com.server.exception.InvalidNumberOfArgsException;
+import filemanager.com.server.exception.InvalidPathException;
+import filemanager.com.server.exception.NoPermissionException;
+import filemanager.com.server.exception.ServerException;
 
 public class MakeDirCommand extends Command {
 	private Path path;
@@ -27,9 +32,9 @@ public class MakeDirCommand extends Command {
 	}
 	
 	@Override
-	public String validate() {
+	public boolean validate() throws ServerException {
 		if(!Validator.validateNumberOfArgs(getArgs(), 1)) {
-			return String.format("Invalid number of arguments! Expected 1 but %d was given\n", getArgs().size());
+			throw new InvalidNumberOfArgsException(1, getArgs().size());
 		}
 		
 		// Set temporary file path by user input
@@ -43,12 +48,12 @@ public class MakeDirCommand extends Command {
 			if(Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
-			return "Invalid file path!";
+			throw new InvalidPathException(tempPath);
 		}
 		
 		// Check permission of user
 		if(!Validator.checkPermission(canonicalPath, tempUser)) {
-			return "Forbidden!";
+			throw new NoPermissionException(tempPath);
 		}
 		
 		// Set up valid path property
@@ -56,20 +61,22 @@ public class MakeDirCommand extends Command {
 		setPath(canonicalFolder);
 		
 		if(Files.exists(getPath())) {
-			return "Directory is already exist!";
+			throw new FileAlreadyExistException(tempPath);
 		}
-		return Constants.RESPONSE_SUCCESS_MSG;
+		return true;
 	}
 
 	@Override
-	public String exec() {
+	public String exec() throws ServerException {
 		try {
 			Files.createDirectories(getPath());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
+			throw new ServerException();
 		}
-		return String.format("Created folder %s", getPath().getFileName());
+		return String.format("Created folder: %s", getPath().getFileName());
 	}
 
 }

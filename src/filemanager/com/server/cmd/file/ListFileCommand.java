@@ -13,6 +13,12 @@ import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.common.Constants;
 import filemanager.com.server.common.Environments;
 import filemanager.com.server.common.Utils;
+import filemanager.com.server.exception.DirectoryNotFoundException;
+import filemanager.com.server.exception.InvalidNumberOfArgsException;
+import filemanager.com.server.exception.InvalidPathException;
+import filemanager.com.server.exception.NoPermissionException;
+import filemanager.com.server.exception.NotADirectoryException;
+import filemanager.com.server.exception.ServerException;
 
 public class ListFileCommand extends Command {
 	private Path path;
@@ -26,10 +32,11 @@ public class ListFileCommand extends Command {
 	}
 
 	@Override
-	public String validate() {
+	public boolean validate() throws ServerException {
 		System.out.println("[SERVER LOG] LIST FILE");
 		if(!Validator.validateNumberOfArgs(getArgs(), 1) && !Validator.validateNumberOfArgs(getArgs(), 0)) {
-			return String.format("Invalid number of arguments! Expected 0 or 1 parameter but %d was given\n", getArgs().size());
+			int[] validNumberOfArguments = {0, 1};
+			throw new InvalidNumberOfArgsException(validNumberOfArguments, getArgs().size());
 		}
 		
 		// Set temporary file path by user input
@@ -48,12 +55,12 @@ public class ListFileCommand extends Command {
 			if(Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
-			return "Invalid file path!";
+			throw new InvalidPathException(tempPath);
 		}
 		
 		// Check permission of user
 		if(!Validator.checkPermission(canonicalFilePath, tempUser)) {
-			return "Forbidden!";
+			throw new NoPermissionException(tempPath);
 		}
 		
 		// Set up valid path property
@@ -61,17 +68,17 @@ public class ListFileCommand extends Command {
 		setPath(canonicalFile);
 		
 		if(!Files.exists(getPath())) {
-			return "Directory not found!";
+			throw new DirectoryNotFoundException(tempPath);
 		}
 		
 		if(!Files.isDirectory(getPath())) {
-			return "The given path is not a directory";
+			throw new NotADirectoryException(tempPath);
 		}
-		return Constants.RESPONSE_SUCCESS_MSG;
+		return true;
 	}
 
 	@Override
-	public String exec() {
+	public String exec() throws ServerException {
 		StringBuilder filesResponse = new StringBuilder();
 		
 		List<Path> files = new ArrayList<>();
@@ -81,7 +88,10 @@ public class ListFileCommand extends Command {
 				files.add(entry);
 			}
 		} catch (IOException e) {
-			return Constants.ERROR_UNEXPECTED;
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
+			throw new ServerException();
 		}
 		
 		if(files.size() == 0) {

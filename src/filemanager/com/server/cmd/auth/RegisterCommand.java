@@ -5,10 +5,10 @@ import filemanager.com.server.cmd.Command;
 public class RegisterCommand extends Command {
 
 	@Override
-	public String validate() {
+	public boolean validate() {
 		// TODO Auto-generated method stub
 		System.out.println("[SERVER LOG] REGISTER VALIDATION");
-		return null;
+		return true;
 	}
 	
 	@Override

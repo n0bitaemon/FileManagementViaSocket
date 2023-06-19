@@ -10,9 +10,13 @@ import java.nio.file.attribute.BasicFileAttributes;
 
 import filemanager.com.server.cmd.Command;
 import filemanager.com.server.cmd.validate.Validator;
-import filemanager.com.server.common.Constants;
 import filemanager.com.server.common.Environments;
 import filemanager.com.server.common.Utils;
+import filemanager.com.server.exception.FileNotFoundException;
+import filemanager.com.server.exception.InvalidNumberOfArgsException;
+import filemanager.com.server.exception.InvalidPathException;
+import filemanager.com.server.exception.NoPermissionException;
+import filemanager.com.server.exception.ServerException;
 
 public class FileDeleteCommand extends Command{
 	// delete /folder/file.txt n0bita
@@ -26,11 +30,11 @@ public class FileDeleteCommand extends Command{
 		this.path = path;
 	}
 	
-	public String validate() {
+	public boolean validate() throws ServerException {
 		System.out.println("[SERVER LOG] FILE DELETION VALIDATE");
 		
 		if(!Validator.validateNumberOfArgs(getArgs(), 1)) {
-			return String.format("Invalid number of arguments! Expected 1 but %d was given\n", getArgs().size());
+			throw new InvalidNumberOfArgsException(1, getArgs().size());
 		}
 		
 		// Set temporary file path by user input
@@ -44,12 +48,12 @@ public class FileDeleteCommand extends Command{
 			if(Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
-			return "Invalid file path!";
+			throw new InvalidPathException(tempPath);
 		}
 		
 		// Check permission of user
 		if(!Validator.checkPermission(canonicalFilePath, tempUser)) {
-			return "Forbidden!";
+			throw new NoPermissionException(tempPath);
 		}
 		
 		// Set up valid path property
@@ -59,15 +63,15 @@ public class FileDeleteCommand extends Command{
 		
 		// Validate file path
 		if(!Files.exists(getPath())) {
-			return "File not found";
+			throw new FileNotFoundException(tempPath);
 		}
 		
 		// Checking for credentials
 		
-		return Constants.RESPONSE_SUCCESS_MSG;
+		return true;
 	}
 
-	public String exec() {
+	public String exec() throws ServerException {
 		System.out.println("[SERVER LOG] FILE DELETION EXECUTION");
 
 		try {
@@ -88,10 +92,10 @@ public class FileDeleteCommand extends Command{
 			if(Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
-			return Constants.ERROR_UNEXPECTED;
+			throw new ServerException();
 		}
 		
-		return String.format("Deleted %s", getPath().getFileName());
+		return String.format("Deleted: ", getPath().getFileName());
 	}
 	
 }

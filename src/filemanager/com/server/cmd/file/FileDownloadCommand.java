@@ -6,9 +6,9 @@ import filemanager.com.server.common.Constants;
 public class FileDownloadCommand extends Command {
 
 	@Override
-	public String validate() {
+	public boolean validate() {
 		System.out.println("[SERVER LOG] FILE DOWNLOAD VALIDATION");
-		return Constants.RESPONSE_SUCCESS_MSG;
+		return true;
 	}
 	
 	@Override

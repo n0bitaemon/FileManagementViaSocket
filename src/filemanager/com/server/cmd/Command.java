@@ -14,6 +14,8 @@ import filemanager.com.server.cmd.file.FileUploadCommand;
 import filemanager.com.server.cmd.file.ListFileCommand;
 import filemanager.com.server.cmd.file.MakeDirCommand;
 import filemanager.com.server.common.Constants;
+import filemanager.com.server.common.Utils;
+import filemanager.com.server.exception.ServerException;
 
 public abstract class Command {
 	
@@ -32,17 +34,19 @@ public abstract class Command {
 		
 	}
 	
-	public abstract String validate();
+	public abstract boolean validate() throws ServerException;
 	
-	public abstract String exec();
+	public abstract String exec() throws ServerException;
 	
 	public static Command parseCommandFromString(String msg) {
 		//Analyze msg and detect cmd type
-		String msg_arr[] = msg.split(" ");
+		String msgArr[] = msg.split(" ");
 		Command cmd;
 		
-		String cmd_name = msg_arr[0];
-		switch (cmd_name) {
+		String cmdNameRaw = msgArr[0];
+		String cmdNameOnlyAlphabe = Utils.removeNonAlphabetCharacter(cmdNameRaw);
+		String cmdName = Utils.normalizeString(cmdNameOnlyAlphabe);
+		switch (cmdName) {
 			case Constants.AUTH_LOGIN_CMD: {
 				cmd = new LoginCommand();
 				break;
@@ -79,8 +83,8 @@ public abstract class Command {
 		}
 
 		List<String> args = new ArrayList<String>();
-		for(int i = 1; i < msg_arr.length; i++) {
-			args.add(msg_arr[i]);
+		for(int i = 1; i < msgArr.length; i++) {
+			args.add(msgArr[i]);
 		}
 		cmd.setArgs(args);
 		
