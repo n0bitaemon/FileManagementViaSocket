@@ -95,7 +95,7 @@ public class FileDeleteCommand extends Command{
 			throw new ServerException();
 		}
 		
-		return String.format("Deleted: ", getPath().getFileName());
+		return String.format("Deleted: %s", getPath().getFileName());
 	}
 	
 }

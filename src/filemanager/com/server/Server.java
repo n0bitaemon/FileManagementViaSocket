@@ -7,10 +7,10 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 
 import filemanager.com.server.cmd.Command;
-import filemanager.com.server.common.Constants;
 import filemanager.com.server.common.Environments;
 import filemanager.com.server.exception.ServerException;
 
@@ -89,7 +89,7 @@ public class Server {
 			}
 		}
         
-        String request = new String(buffer.array(), 0, numBytes).trim();
+        String request = new String(buffer.array(), 0, numBytes, StandardCharsets.UTF_8).trim();
         
         System.out.println("Received request from " + remoteAddress + ": " + request);
         key.interestOps(SelectionKey.OP_WRITE);
@@ -131,9 +131,11 @@ public class Server {
     	Command cmd = Command.parseCommandFromString(req);
         if(cmd != null) {
         	// Only return validateResponse if there is an error in validation step
-        	boolean isValid = false;
         	try {
-				isValid = cmd.validate();
+        		// EXP00-J: Không bỏ qua giá trị trả về của hàm
+        		if(!cmd.validate()) {
+        			return "Validation error";
+        		}
 			} catch (ServerException e) {
 				return e.getMessage();
 			}
