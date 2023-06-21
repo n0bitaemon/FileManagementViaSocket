@@ -34,5 +34,4 @@ public class Utils {
 		return Constants.STORAGE_DIR + username;
 	}
 	
-	
 }

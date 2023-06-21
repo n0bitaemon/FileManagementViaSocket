@@ -1,5 +1,6 @@
 package filemanager.com.server.cmd;
 
+import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,25 @@ import filemanager.com.server.exception.ServerException;
 public abstract class Command {
 	
 	private List<String> args;
+	private SocketAddress remoteAddress;
 	public static final String tempUser = "n0bita";
+
+	public Command() {
+		
+	}
+	
+	public Command(SocketAddress ipAddress) {
+		this.remoteAddress = ipAddress;
+	}
+	
+	public Command(List<String> args) {
+		this.args = args;
+	}
+	
+	public Command(SocketAddress ipAddress, List<String> args) {
+		this.remoteAddress = ipAddress;
+		this.args = args;
+	}
 	
 	public List<String> getArgs() {
 		return args;
@@ -29,16 +48,20 @@ public abstract class Command {
 	public void setArgs(List<String> args) {
 		this.args = args;
 	}
-
-	public Command() {
-		
-	}
 	
+	public SocketAddress getRemoteAddress() {
+		return remoteAddress;
+	}
+
+	public void setRemoteAddress(SocketAddress remoteAddress) {
+		this.remoteAddress = remoteAddress;
+	}
+
 	public abstract boolean validate() throws ServerException;
 	
 	public abstract String exec() throws ServerException;
 	
-	public static Command parseCommandFromString(String msg) {
+	public static Command parseCommandFromString(String msg, SocketAddress remoteAddress) {
 		//Analyze msg and detect cmd type
 		String msgArr[] = msg.split(" ");
 		Command cmd;
@@ -87,6 +110,7 @@ public abstract class Command {
 			args.add(msgArr[i]);
 		}
 		cmd.setArgs(args);
+		cmd.setRemoteAddress(remoteAddress);
 		
 		return cmd;
 	}

@@ -2,6 +2,7 @@ package filemanager.com.server;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -94,16 +95,15 @@ public class Server {
     
     private void write(SelectionKey key) throws IOException {
         SocketChannel socketChannel = (SocketChannel) key.channel();
+        SocketAddress remoteAddress = socketChannel.getRemoteAddress();
         String req = (String) key.attachment();
-        String res = getResponse(req);
+        String res = getResponse(req, remoteAddress);
         
         buffer.clear();
         buffer.put(res.getBytes());
         buffer.flip();
         
-        String remoteAddress = null;
         socketChannel.write(buffer);
-        remoteAddress = socketChannel.getRemoteAddress().toString();
         
         key.interestOps(SelectionKey.OP_READ);
         System.out.println("Sent response to " + remoteAddress + ": " + res);
@@ -116,8 +116,8 @@ public class Server {
         socketChannel.close();
     }
     
-    private String getResponse(String req) {
-    	Command cmd = Command.parseCommandFromString(req);
+    private String getResponse(String req, SocketAddress remoteAddress) {
+    	Command cmd = Command.parseCommandFromString(req, remoteAddress);
         if(cmd != null) {
         	// Only return validateResponse if there is an error in validation step
         	try {

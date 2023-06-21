@@ -7,7 +7,6 @@ import java.nio.file.Paths;
 
 import filemanager.com.server.cmd.Command;
 import filemanager.com.server.cmd.validate.Validator;
-import filemanager.com.server.common.Constants;
 import filemanager.com.server.common.Environments;
 import filemanager.com.server.common.Utils;
 import filemanager.com.server.exception.FileNotFoundException;

@@ -10,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class Client {
-    
     private ByteBuffer buffer;
     private SocketChannel socketChannel;
     
