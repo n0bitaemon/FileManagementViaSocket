@@ -2,6 +2,7 @@ package filemanager.com.server;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -15,7 +16,6 @@ import filemanager.com.server.common.Environments;
 import filemanager.com.server.exception.ServerException;
 
 public class Server {
-    
     private Selector selector;
     private ByteBuffer buffer;
     
@@ -31,7 +31,8 @@ public class Server {
     
     public void start() throws IOException {
         while (true) {
-            selector.select();
+			selector.select();
+            
             Iterator<SelectionKey> keyIterator = selector.selectedKeys().iterator();
             while (keyIterator.hasNext()) {
                 SelectionKey key = keyIterator.next();
@@ -39,55 +40,50 @@ public class Server {
                 if (!key.isValid()) {
                     continue;
                 }
-                if (key.isAcceptable()) {
-                    accept(key);
-                } else if (key.isReadable()) {
-                    read(key);
-                } else if (key.isWritable()) {
-                    write(key);
-                }
+                try {
+                    if (key.isAcceptable()) {
+                    	accept(key);
+                    } else if (key.isReadable()) {
+    					read(key);
+                    } else if (key.isWritable()) {
+                        write(key);
+                    }
+                } catch (BufferOverflowException e) {
+                	if(Environments.DEBUG_MODE) {
+                		e.printStackTrace();
+                	}
+                	System.out.println("[ERROR] Message sent from server is too large!");
+                } catch (IOException e) {
+                	if(Environments.DEBUG_MODE) {
+                		e.printStackTrace();
+                	}
+                	disconnect(key);
+				}
             }
         }
     }
     
-    private void accept(SelectionKey key) {
+    private void accept(SelectionKey key) throws IOException {
         ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
-        try {
-            SocketChannel socketChannel;
-            socketChannel = serverSocketChannel.accept();
-            socketChannel.configureBlocking(false);
-            socketChannel.register(selector, SelectionKey.OP_READ);
-            System.out.println("New client connected: " + socketChannel.getRemoteAddress());
-        }catch (IOException e) {
-			if(Environments.DEBUG_MODE) {
-				e.printStackTrace();
-			}
-			System.out.println("[ERROR] Cannot accept client");
-		}
+        SocketChannel socketChannel;
+        socketChannel = serverSocketChannel.accept();
+        socketChannel.configureBlocking(false);
+        socketChannel.register(selector, SelectionKey.OP_READ);
+        System.out.println("New client connected: " + socketChannel.getRemoteAddress());
     }
     
-    private void read(SelectionKey key) {
+    private void read(SelectionKey key) throws IOException {
         SocketChannel socketChannel = (SocketChannel) key.channel();
         buffer.clear();
 
         String remoteAddress = null;
-        int numBytes = 0;
-        
-        System.out.println("Buffer content: " + buffer.toString());
-        
-        try {
-        	numBytes = socketChannel.read(buffer);
-            if (numBytes == -1) {
-                disconnect(key);
-                return;
-            }
-        	remoteAddress = socketChannel.getRemoteAddress().toString();
-        }catch (Exception e) {
-        	System.err.println("[ERROR] Cannot read buffer");
-			if(Environments.DEBUG_MODE) {
-				e.printStackTrace();
-			}
-		}
+        int numBytes = socketChannel.read(buffer);
+        if (numBytes == -1) {
+            disconnect(key);
+            return;
+        }
+
+    	remoteAddress = socketChannel.getRemoteAddress().toString();
         
         String request = new String(buffer.array(), 0, numBytes, StandardCharsets.UTF_8).trim();
         
@@ -96,7 +92,7 @@ public class Server {
         key.attach(request);
     }
     
-    private void write(SelectionKey key) {
+    private void write(SelectionKey key) throws IOException {
         SocketChannel socketChannel = (SocketChannel) key.channel();
         String req = (String) key.attachment();
         String res = getResponse(req);
@@ -106,15 +102,8 @@ public class Server {
         buffer.flip();
         
         String remoteAddress = null;
-        try {
-            socketChannel.write(buffer);
-            remoteAddress = socketChannel.getRemoteAddress().toString();
-        }catch (IOException e) {
-        	System.err.println("[ERROR] Cannot write to buffer");
-			if(Environments.DEBUG_MODE) {
-				e.printStackTrace();
-			}
-		}
+        socketChannel.write(buffer);
+        remoteAddress = socketChannel.getRemoteAddress().toString();
         
         key.interestOps(SelectionKey.OP_READ);
         System.out.println("Sent response to " + remoteAddress + ": " + res);
@@ -158,12 +147,21 @@ public class Server {
         Server server;
 		try {
 			server = new Server(port);
-	        server.start();
 		} catch (IOException e) {
 			if(Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
-			System.err.println("[ERR]: Cannot start server");
+			System.err.println("[ERROR] Cannot start server");
+			return;
+		}
+
+        try {
+			server.start();
+		} catch (IOException e) {
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
+			System.err.println("[ERROR] Unexpected error!");
 		}
     }
 }

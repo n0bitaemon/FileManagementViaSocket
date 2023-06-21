@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
+import java.nio.channels.NotYetConnectedException;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
@@ -20,7 +21,7 @@ public class Client {
         System.out.println("Connected to server at " + host + ":" + port);
     }
     
-    public String send(String message) throws IOException {
+    public String send(String message) throws IOException, NotYetConnectedException {
     	// Send request
         buffer.clear();
         try {
@@ -39,8 +40,34 @@ public class Client {
         return response;
     }
     
-    public void close() throws IOException {
+    public void disconnect() throws IOException {
         socketChannel.close();
+        System.out.println("Disconnected to server!");
+    }
+    
+    public void loop() throws IOException {
+    	Scanner sc = new Scanner(System.in);
+        String cmd;
+        String res;
+        
+        while(true) {
+        	cmd = sc.nextLine();
+        	if(cmd.equalsIgnoreCase("exit")) {
+        		break;
+        	}
+        	try {
+    			res = send(cmd);
+			} catch (NotYetConnectedException e) {
+				res = "The server is disconnected!";
+			} catch (BufferOverflowException e) {
+				res = "Client error: Message to long!";
+			} catch (IOException e) {
+				res = "Unexpected error!";
+			}
+            System.out.println(res);
+        }
+        
+        sc.close();
     }
     
     public static void main(String[] args) {
@@ -53,25 +80,14 @@ public class Client {
 			System.out.println("Cannot connect to server");
 			System.exit(0);
 		}
-        Scanner sc = new Scanner(System.in);
-        String cmd;
-        String res = null;
+		
+		try {
+			client.loop();
+			client.disconnect();
+		} catch (IOException e) {
+			System.out.println("Unexpected error!");
+			e.printStackTrace();
+		}
         
-        while(true) {
-        	cmd = sc.nextLine();
-        	try {
-				res = client.send(cmd);
-			} catch (BufferOverflowException e) {
-				res = "Client error: Message to long!";
-			} catch (IOException e) {
-				res = "Client error: Cannot send message!";
-			}
-            System.out.println(res);
-            if(res.equalsIgnoreCase("exit")) {
-            	break;
-            }
-        }
-        
-        sc.close();
     }
 }

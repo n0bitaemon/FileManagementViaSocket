@@ -113,8 +113,8 @@ public class FileCopyCommand extends Command {
 			throw new ServerException();
 		}
 		
-		String relativeOldPath = getOldPath().toString().replace(Constants.STORAGE_DIR + tempUser, "");
-		String relativeNewPath = getNewPath().toString().replace(Constants.STORAGE_DIR + tempUser, "");
+		String relativeOldPath = getOldPath().toString().replace(Utils.getUserDir(tempUser), "");
+		String relativeNewPath = getNewPath().toString().replace(Utils.getUserDir(tempUser), "");
 		return String.format("File copied: %s => %s", relativeOldPath, relativeNewPath);
 	}
 

@@ -30,5 +30,9 @@ public class Utils {
 		return Normalizer.normalize(s, Form.NFKC);
 	}
 	
+	public static String getUserDir(String username) {
+		return Constants.STORAGE_DIR + username;
+	}
+	
 	
 }
