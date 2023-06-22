@@ -12,9 +12,18 @@ import java.util.Hashtable;
 
 import filemanager.com.server.common.Environments;
 
+/**
+ * @author n0bita-windows
+ *
+ */
 public class Authentication {
 	public static Dictionary<SocketAddress, String> session = new Hashtable<>();
 
+	/**
+	 * 
+	 * @param username
+	 * @param pass
+	 */
 	public static void addAccountToDatabase(String username, String pass) {
 		String url = Environments.JDBC_URL; // information of the database
 		String usernameforsql = Environments.JDBC_USR;
@@ -42,6 +51,10 @@ public class Authentication {
 		}
 	}
 
+	/**
+	 * @param user
+	 * @return
+	 */
 	public static boolean findAccInDatabase(String user) { // find account with given username
 		String url = Environments.JDBC_URL; // information of the database
 		String usernameforsql = Environments.JDBC_USR;
@@ -117,17 +130,17 @@ public class Authentication {
 		 * System.out.println("key: " + k + ", value: " + Authentication.loging.get(k));
 		 * }
 		 */
-		Boolean res = false;
 		Enumeration<String> name = session.elements();
 
 		while (name.hasMoreElements()) {
-			Object n = name.nextElement();
+			String n = name.nextElement();
+			System.out.println("USername: " + n);
 			if (n.equals(username)) {
-				res = true;
+				return true;
 			}
 		}
 
-		return res;
+		return false;
 
 	}
 

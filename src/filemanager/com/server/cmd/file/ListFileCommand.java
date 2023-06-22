@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import filemanager.com.server.auth.Authentication;
 import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.common.Environments;
 import filemanager.com.server.common.Utils;
@@ -33,14 +34,16 @@ public class ListFileCommand extends AuthCommand {
 	@Override
 	public boolean validate() throws ServerException {
 		System.out.println("[INFO] LIST FILE VALIDATE");
-		setUsername(Utils.getCurrentUsername(getRemoteAddress().toString()));
+		
+		setUsername(Utils.getCurrentUsername(getRemoteAddress()));
 
 		if (!Validator.validateNumberOfArgs(getArgs(), 1) && !Validator.validateNumberOfArgs(getArgs(), 0)) {
 			int[] validNumberOfArguments = { 0, 1 };
 			throw new InvalidNumberOfArgsException(validNumberOfArguments, getArgs().size());
 		}
 
-		if (!isLoggedIn()) {
+		System.out.println("Username: " + getUsername());
+		if (!Authentication.accIsLoging(getUsername())) {
 			throw new NotLoggedInException();
 		}
 

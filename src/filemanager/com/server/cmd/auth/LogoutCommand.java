@@ -6,7 +6,6 @@ import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.exception.InvalidNumberOfArgsException;
 import filemanager.com.server.exception.NotLoggedInException;
 import filemanager.com.server.exception.ServerException;
-import filemanager.com.server.exception.UserAlreadyLoginException;
 
 public class LogoutCommand extends Command {
 
@@ -24,7 +23,6 @@ public class LogoutCommand extends Command {
 
 	@Override
 	public String exec() throws ServerException {
-
 		Authentication.session.remove(getRemoteAddress());
 		return "Logged out";
 	}

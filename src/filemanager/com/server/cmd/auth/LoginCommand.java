@@ -22,6 +22,7 @@ public class LoginCommand extends Command {
 		if (Authentication.channelIsLoging(getRemoteAddress())) {
 			throw new UserAlreadyLoginException(Authentication.session.get(getRemoteAddress()));
 		}
+		
 		String username = this.getArgs().get(0);
 		if (Authentication.accIsLoging(username)) {
 			Authentication.session.remove(Authentication.accOfChannel(username));

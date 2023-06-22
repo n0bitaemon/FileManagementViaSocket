@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
+import filemanager.com.server.auth.Authentication;
 import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.common.Environments;
 import filemanager.com.server.common.Utils;
@@ -32,13 +33,13 @@ public class FileDeleteCommand extends AuthCommand {
 
 	public boolean validate() throws ServerException {
 		System.out.println("[SERVER LOG] FILE DELETION VALIDATE");
-		setUsername(Utils.getCurrentUsername(getRemoteAddress().toString()));
+		setUsername(Utils.getCurrentUsername(getRemoteAddress()));
 
 		if (!Validator.validateNumberOfArgs(getArgs(), 1)) {
 			throw new InvalidNumberOfArgsException(1, getArgs().size());
 		}
 
-		if (!isLoggedIn()) {
+		if (!Authentication.accIsLoging(getUsername())) {
 			throw new NotLoggedInException();
 		}
 

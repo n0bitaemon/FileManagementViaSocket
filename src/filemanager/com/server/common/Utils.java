@@ -2,6 +2,7 @@ package filemanager.com.server.common;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.SocketAddress;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.Normalizer;
@@ -36,7 +37,7 @@ public class Utils {
 		return Constants.STORAGE_DIR + username;
 	}
 
-	public static String getCurrentUsername(String remoteAddress) {
+	public static String getCurrentUsername(SocketAddress remoteAddress) {
 		return Authentication.session.get(remoteAddress);
 	}
 

@@ -34,7 +34,9 @@ public class Client implements AutoCloseable {
 
 		// Read response
 		buffer.clear();
+		System.out.println("previous");
 		int numBytes = socketChannel.read(buffer);
+		System.out.println("after");
 		String response = new String(buffer.array(), 0, numBytes, StandardCharsets.UTF_8).trim();
 		return response;
 	}

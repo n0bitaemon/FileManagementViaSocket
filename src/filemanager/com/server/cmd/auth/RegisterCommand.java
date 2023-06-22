@@ -1,8 +1,15 @@
 package filemanager.com.server.cmd.auth;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import filemanager.com.server.auth.Authentication;
 import filemanager.com.server.cmd.Command;
 import filemanager.com.server.cmd.validate.Validator;
+import filemanager.com.server.common.Constants;
+import filemanager.com.server.common.Environments;
 import filemanager.com.server.exception.InvalidNumberOfArgsException;
 import filemanager.com.server.exception.MinLengthException;
 import filemanager.com.server.exception.ServerException;
@@ -37,6 +44,17 @@ public class RegisterCommand extends Command {
 		}
 
 		Authentication.addAccountToDatabase(username, password);
+		
+		Path path = Paths.get(Constants.STORAGE_DIR + username);
+		try {
+			Files.createDirectories(path);
+		} catch (IOException e) {
+			if (Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
+			throw new ServerException();
+		}
+		
 		return String.format("Register account %s success", username);
 	}
 

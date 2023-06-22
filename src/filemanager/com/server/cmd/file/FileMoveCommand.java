@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import filemanager.com.server.auth.Authentication;
 import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.common.Constants;
 import filemanager.com.server.common.Environments;
@@ -43,12 +44,12 @@ public class FileMoveCommand extends AuthCommand {
 	@Override
 	public boolean validate() throws ServerException {
 		System.out.println("[SERVER LOG] FILE MOVE VALIDATE");
-		setUsername(Utils.getCurrentUsername(getRemoteAddress().toString()));
+		setUsername(Utils.getCurrentUsername(getRemoteAddress()));
 		if (!Validator.validateNumberOfArgs(getArgs(), 2)) {
 			throw new InvalidNumberOfArgsException(2, getArgs().size());
 		}
 
-		if (!isLoggedIn()) {
+		if (!Authentication.accIsLoging(getUsername())) {
 			throw new NotLoggedInException();
 		}
 
