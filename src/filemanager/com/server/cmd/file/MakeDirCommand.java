@@ -17,11 +17,11 @@ import filemanager.com.server.exception.ServerException;
 
 public class MakeDirCommand extends AuthCommand {
 	private Path path;
-	
+
 	public MakeDirCommand() {
-		
+
 	}
-	
+
 	public Path getPath() {
 		return path;
 	}
@@ -33,41 +33,41 @@ public class MakeDirCommand extends AuthCommand {
 	@Override
 	public boolean validate() throws ServerException {
 		System.out.println("[SERVER LOG] MAKE DIR VALIDATE");
-		
+
 		setUsername(Utils.getCurrentUsername(getRemoteAddress().toString()));
-		
-		if(!Validator.validateNumberOfArgs(getArgs(), 1)) {
+
+		if (!Validator.validateNumberOfArgs(getArgs(), 1)) {
 			throw new InvalidNumberOfArgsException(1, getArgs().size());
 		}
-		
-		if(!isLoggedIn()) {
+
+		if (!isLoggedIn()) {
 			throw new NotLoggedInException();
 		}
-		
+
 		// Set temporary file path by user input
 		String tempPath = getArgs().get(0);
-		
+
 		// Set canonical file path
 		String canonicalPath;
 		try {
-			 canonicalPath = Utils.getCanonicalFilePath(tempPath, getUsername());
+			canonicalPath = Utils.getCanonicalFilePath(tempPath, getUsername());
 		} catch (IOException e) {
-			if(Environments.DEBUG_MODE) {
+			if (Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
 			throw new InvalidPathException(tempPath);
 		}
-		
+
 		// Check permission of user
-		if(!Validator.checkPermission(canonicalPath, getUsername())) {
+		if (!Validator.checkPermission(canonicalPath, getUsername())) {
 			throw new NoPermissionException(tempPath);
 		}
-		
+
 		// Set up valid path property
 		Path canonicalFolder = Paths.get(canonicalPath);
 		setPath(canonicalFolder);
-		
-		if(Files.exists(getPath())) {
+
+		if (Files.exists(getPath())) {
 			throw new FileAlreadyExistException(tempPath);
 		}
 		return true;
@@ -79,7 +79,7 @@ public class MakeDirCommand extends AuthCommand {
 		try {
 			Files.createDirectories(getPath());
 		} catch (IOException e) {
-			if(Environments.DEBUG_MODE) {
+			if (Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
 			throw new ServerException();

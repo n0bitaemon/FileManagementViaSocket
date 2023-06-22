@@ -12,7 +12,7 @@ import java.util.Hashtable;
 
 import filemanager.com.server.common.Environments;
 
-public class Authentication {	
+public class Authentication {
 	public static Dictionary<SocketAddress, String> session = new Hashtable<>();
 
 	public static void addAccountToDatabase(String username, String pass) {
@@ -30,13 +30,13 @@ public class Authentication {
 			} else {
 				String query = "insert into account values(\"{0}\", \"{1}\")";
 				String statement = MessageFormat.format(query, username, pass); // content of the sql
-																									// statement
+																				// statement
 				stat1.executeUpdate(statement); // execute the statement
 				System.out.println("Create new account success");
 			}
 			con.close(); // close the connection
 		} catch (Exception e) {
-			if(Environments.DEBUG_MODE) {
+			if (Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
 		}
@@ -65,7 +65,7 @@ public class Authentication {
 			}
 			con.close();
 		} catch (Exception e) {
-			if(Environments.DEBUG_MODE) {
+			if (Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
 		}
@@ -99,7 +99,7 @@ public class Authentication {
 			}
 			con.close();
 		} catch (Exception e) {
-			if(Environments.DEBUG_MODE) {
+			if (Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
 		}

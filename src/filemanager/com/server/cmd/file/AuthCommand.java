@@ -5,7 +5,7 @@ import filemanager.com.server.cmd.Command;
 
 public abstract class AuthCommand extends Command {
 	private String username;
-	
+
 	public String getUsername() {
 		return username;
 	}
@@ -13,15 +13,15 @@ public abstract class AuthCommand extends Command {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	
+
 	public boolean isLoggedIn() {
-		if(getUsername() == null)
+		if (getUsername() == null)
 			return false;
-		
-		if(!Authentication.accIsLoging(getUsername())) {
+
+		if (!Authentication.accIsLoging(getUsername())) {
 			return false;
 		}
-		
+
 		return true;
 	}
 }

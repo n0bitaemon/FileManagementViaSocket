@@ -12,7 +12,7 @@ public class Validator {
 
 	public static boolean checkPermission(String canonicalFilePath, String userDir) {
 		String userFolder = Constants.STORAGE_DIR + userDir;
-		if(canonicalFilePath.startsWith(userFolder)) {
+		if (canonicalFilePath.startsWith(userFolder)) {
 			return true;
 		}
 		return false;

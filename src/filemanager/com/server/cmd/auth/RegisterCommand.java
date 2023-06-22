@@ -29,7 +29,7 @@ public class RegisterCommand extends Command {
 		if (Authentication.findAccInDatabase(username)) {
 			throw new UserAlreadyExistException(username);
 		}
-		
+
 		Authentication.addAccountToDatabase(this.getArgs().get(0), this.getArgs().get(1));
 		return String.format("Register account %s success", username);
 	}

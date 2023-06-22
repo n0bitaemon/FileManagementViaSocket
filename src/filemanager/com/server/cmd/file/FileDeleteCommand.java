@@ -18,14 +18,14 @@ import filemanager.com.server.exception.NoPermissionException;
 import filemanager.com.server.exception.NotLoggedInException;
 import filemanager.com.server.exception.ServerException;
 
-public class FileDeleteCommand extends AuthCommand{
+public class FileDeleteCommand extends AuthCommand {
 	// delete /folder/file.txt n0bita
 	private Path path;
-	
+
 	public Path getPath() {
 		return path;
 	}
-	
+
 	public void setPath(Path path) {
 		this.path = path;
 	}
@@ -33,46 +33,45 @@ public class FileDeleteCommand extends AuthCommand{
 	public boolean validate() throws ServerException {
 		System.out.println("[SERVER LOG] FILE DELETION VALIDATE");
 		setUsername(Utils.getCurrentUsername(getRemoteAddress().toString()));
-		
-		if(!Validator.validateNumberOfArgs(getArgs(), 1)) {
+
+		if (!Validator.validateNumberOfArgs(getArgs(), 1)) {
 			throw new InvalidNumberOfArgsException(1, getArgs().size());
 		}
-		
-		if(!isLoggedIn()) {
+
+		if (!isLoggedIn()) {
 			throw new NotLoggedInException();
 		}
-		
+
 		// Set temporary file path by user input
 		String tempPath = getArgs().get(0);
-		
+
 		// Set canonical file path
 		String canonicalFilePath;
 		try {
-			 canonicalFilePath = Utils.getCanonicalFilePath(tempPath, getUsername());
+			canonicalFilePath = Utils.getCanonicalFilePath(tempPath, getUsername());
 		} catch (IOException e) {
-			if(Environments.DEBUG_MODE) {
+			if (Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
 			throw new InvalidPathException(tempPath);
 		}
-		
+
 		// Check permission of user
-		if(!Validator.checkPermission(canonicalFilePath, getUsername())) {
+		if (!Validator.checkPermission(canonicalFilePath, getUsername())) {
 			throw new NoPermissionException(tempPath);
 		}
-		
+
 		// Set up valid path property
 		Path canonicalFile = Paths.get(canonicalFilePath);
 		setPath(canonicalFile);
-				
-		
+
 		// Validate file path
-		if(!Files.exists(getPath())) {
+		if (!Files.exists(getPath())) {
 			throw new FileNotFoundException(tempPath);
 		}
-		
+
 		// Checking for credentials
-		
+
 		return true;
 	}
 
@@ -86,7 +85,7 @@ public class FileDeleteCommand extends AuthCommand{
 					Files.delete(file);
 					return FileVisitResult.CONTINUE;
 				}
-				
+
 				@Override
 				public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
 					Files.delete(dir);
@@ -94,13 +93,13 @@ public class FileDeleteCommand extends AuthCommand{
 				}
 			});
 		} catch (IOException e) {
-			if(Environments.DEBUG_MODE) {
+			if (Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
 			throw new ServerException();
 		}
-		
+
 		return String.format("Deleted: %s", getPath().getFileName());
 	}
-	
+
 }

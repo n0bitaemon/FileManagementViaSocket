@@ -10,12 +10,11 @@ public class FileDownloadCommand extends Command {
 		System.out.println("[SERVER LOG] FILE DOWNLOAD VALIDATION");
 		return true;
 	}
-	
+
 	@Override
 	public String exec() {
 		System.out.println("[SERVER LOG] FILE DOWNLOAD EXECUTION");
 		return Constants.RESPONSE_SUCCESS_MSG;
 	}
-
 
 }

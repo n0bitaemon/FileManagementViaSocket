@@ -21,11 +21,11 @@ import filemanager.com.server.exception.ServerException;
 
 public class ListFileCommand extends AuthCommand {
 	private Path path;
-	
+
 	public Path getPath() {
 		return this.path;
 	}
-	
+
 	public void setPath(Path path) {
 		this.path = path;
 	}
@@ -34,49 +34,49 @@ public class ListFileCommand extends AuthCommand {
 	public boolean validate() throws ServerException {
 		System.out.println("[INFO] LIST FILE VALIDATE");
 		setUsername(Utils.getCurrentUsername(getRemoteAddress().toString()));
-		
-		if(!Validator.validateNumberOfArgs(getArgs(), 1) && !Validator.validateNumberOfArgs(getArgs(), 0)) {
-			int[] validNumberOfArguments = {0, 1};
+
+		if (!Validator.validateNumberOfArgs(getArgs(), 1) && !Validator.validateNumberOfArgs(getArgs(), 0)) {
+			int[] validNumberOfArguments = { 0, 1 };
 			throw new InvalidNumberOfArgsException(validNumberOfArguments, getArgs().size());
 		}
-		
-		if(!isLoggedIn()) {
+
+		if (!isLoggedIn()) {
 			throw new NotLoggedInException();
 		}
-		
+
 		// Set temporary file path by user input
 		String tempPath;
-		if(getArgs().size() == 1) {
+		if (getArgs().size() == 1) {
 			tempPath = getArgs().get(0);
-		}else {
+		} else {
 			tempPath = "/";
 		}
-		
+
 		// Set canonical file path
 		String canonicalFilePath;
 		try {
-			 canonicalFilePath = Utils.getCanonicalFilePath(tempPath, getUsername());
+			canonicalFilePath = Utils.getCanonicalFilePath(tempPath, getUsername());
 		} catch (IOException e) {
-			if(Environments.DEBUG_MODE) {
+			if (Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
 			throw new InvalidPathException(tempPath);
 		}
-		
+
 		// Check permission of user
-		if(!Validator.checkPermission(canonicalFilePath, getUsername())) {
+		if (!Validator.checkPermission(canonicalFilePath, getUsername())) {
 			throw new NoPermissionException(tempPath);
 		}
-		
+
 		// Set up valid path property
 		Path canonicalFile = Paths.get(canonicalFilePath);
 		setPath(canonicalFile);
-		
-		if(!Files.exists(getPath())) {
+
+		if (!Files.exists(getPath())) {
 			throw new DirectoryNotFoundException(tempPath);
 		}
-		
-		if(!Files.isDirectory(getPath())) {
+
+		if (!Files.isDirectory(getPath())) {
 			throw new NotADirectoryException(tempPath);
 		}
 		return true;
@@ -85,32 +85,32 @@ public class ListFileCommand extends AuthCommand {
 	@Override
 	public String exec() throws ServerException {
 		StringBuilder filesResponse = new StringBuilder();
-		
+
 		List<Path> files = new ArrayList<>();
 		try {
 			DirectoryStream<Path> stream = Files.newDirectoryStream(getPath());
-			for(Path entry : stream) {
+			for (Path entry : stream) {
 				files.add(entry);
 			}
 		} catch (IOException e) {
-			if(Environments.DEBUG_MODE) {
+			if (Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
 			throw new ServerException();
 		}
-		
-		if(files.size() == 0) {
+
+		if (files.size() == 0) {
 			filesResponse.append("");
 			return filesResponse.toString();
 		}
-		
-		for(Path entry : files) {
-			filesResponse.append(files.indexOf(entry) == files.size()-1 ? "└─ " : "├─ ");
+
+		for (Path entry : files) {
+			filesResponse.append(files.indexOf(entry) == files.size() - 1 ? "└─ " : "├─ ");
 			filesResponse.append(entry.getFileName().toString());
 			filesResponse.append("\n");
 		}
-		
+
 		return filesResponse.toString();
 	}
-	
+
 }

@@ -15,29 +15,29 @@ public class Utils {
 		boolean isValid = path.isAbsolute() && path.startsWith("/");
 		return isValid;
 	}
-	
+
 	public static String getCanonicalFilePath(String path, String userDir) throws IOException {
 		String userFolder = Constants.STORAGE_DIR + userDir;
 		File file = new File(userFolder, path);
 		return file.getCanonicalFile().toString();
 	}
-	
+
 	public static String removeNonAlphabetCharacter(String s) {
-		if(s == null)
+		if (s == null)
 			return null;
 		return s.replaceAll("[^A-Za-z0-9]", "");
 	}
-	
+
 	public static String normalizeString(String s) {
 		return Normalizer.normalize(s, Form.NFKC);
 	}
-	
+
 	public static String getUserDir(String username) {
 		return Constants.STORAGE_DIR + username;
 	}
-	
+
 	public static String getCurrentUsername(String remoteAddress) {
 		return Authentication.session.get(remoteAddress);
 	}
-	
+
 }

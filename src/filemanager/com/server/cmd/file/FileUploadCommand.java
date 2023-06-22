@@ -9,12 +9,11 @@ public class FileUploadCommand extends AuthCommand {
 		System.out.println("[SERVER LOG] FILE UPLOAD VALIDATION");
 		return true;
 	}
-	
+
 	@Override
 	public String exec() {
 		System.out.println("[SERVER LOG] FILE UPLOAD EXECUTION");
 		return Constants.RESPONSE_SUCCESS_MSG;
 	}
-
 
 }
