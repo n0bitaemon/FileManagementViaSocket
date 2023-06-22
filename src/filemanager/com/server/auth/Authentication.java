@@ -36,7 +36,9 @@ public class Authentication {
 			}
 			con.close(); // close the connection
 		} catch (Exception e) {
-			System.out.println(e);
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -63,7 +65,9 @@ public class Authentication {
 			}
 			con.close();
 		} catch (Exception e) {
-			System.out.println(e);
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
 		}
 
 		if (u != null) {
@@ -95,7 +99,9 @@ public class Authentication {
 			}
 			con.close();
 		} catch (Exception e) {
-			System.out.println(e);
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
 		}
 		if (pass.equals(p)) {
 			check = true;

@@ -9,7 +9,7 @@ import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
-public class Client {
+public class Client implements AutoCloseable {
     private ByteBuffer buffer;
     private SocketChannel socketChannel;
     
@@ -72,21 +72,19 @@ public class Client {
     public static void main(String[] args) {
         String host = "localhost";
         int port = 3000;
-        Client client = null;
-		try {
-			client = new Client(host, port);
-		} catch (IOException e) {
-			System.out.println("Cannot connect to server");
-			System.exit(0);
-		}
 		
-		try {
+		try(Client client = new Client(host, port)) {
 			client.loop();
 			client.disconnect();
-		} catch (IOException e) {
-			System.out.println("Unexpected error!");
+		} catch (Exception e) {
+			System.out.println("[ERROR] CANNOT CONNECT TO SERVER");
 			e.printStackTrace();
 		}
         
     }
+
+	@Override
+	public void close() throws Exception {
+		socketChannel.close();
+	}
 }

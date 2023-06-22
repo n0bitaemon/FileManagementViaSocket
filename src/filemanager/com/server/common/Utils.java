@@ -7,6 +7,8 @@ import java.nio.file.Paths;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 
+import filemanager.com.server.auth.Authentication;
+
 public class Utils {
 	public static boolean validateFilePath(String filePath) {
 		Path path = Paths.get(filePath);
@@ -32,6 +34,10 @@ public class Utils {
 	
 	public static String getUserDir(String username) {
 		return Constants.STORAGE_DIR + username;
+	}
+	
+	public static String getCurrentUsername(String remoteAddress) {
+		return Authentication.session.get(remoteAddress);
 	}
 	
 }

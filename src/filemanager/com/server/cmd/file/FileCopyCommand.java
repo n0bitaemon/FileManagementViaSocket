@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import filemanager.com.server.cmd.Command;
 import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.common.Environments;
 import filemanager.com.server.common.Utils;
@@ -13,9 +12,10 @@ import filemanager.com.server.exception.FileNotFoundException;
 import filemanager.com.server.exception.InvalidNumberOfArgsException;
 import filemanager.com.server.exception.InvalidPathException;
 import filemanager.com.server.exception.NoPermissionException;
+import filemanager.com.server.exception.NotLoggedInException;
 import filemanager.com.server.exception.ServerException;
 
-public class FileCopyCommand extends Command {
+public class FileCopyCommand extends AuthCommand {
 	private Path oldPath;
 	private Path newPath;
 	
@@ -37,11 +37,18 @@ public class FileCopyCommand extends Command {
 	public void setNewPath(Path newPath) {
 		this.newPath = newPath;
 	}
-
+	
 	@Override
 	public boolean validate() throws ServerException {
+		System.out.println("[SERVER LOG] FILE COPY VALIDATE");
+		setUsername(Utils.getCurrentUsername(getRemoteAddress().toString()));
+		
 		if(!Validator.validateNumberOfArgs(getArgs(), 2)) {
 			throw new InvalidNumberOfArgsException(2, getArgs().size());
+		}
+		
+		if(!isLoggedIn()) {
+			throw new NotLoggedInException();
 		}
 		
 		// Set temporary file path by user input
@@ -51,7 +58,7 @@ public class FileCopyCommand extends Command {
 		// Set canonical old file path
 		String canonicalOldFilePath;
 		try {
-			 canonicalOldFilePath = Utils.getCanonicalFilePath(tempOldPath, tempUser);
+			 canonicalOldFilePath = Utils.getCanonicalFilePath(tempOldPath, getUsername());
 		} catch (IOException e) {
 			if(Environments.DEBUG_MODE) {
 				e.printStackTrace();
@@ -62,7 +69,7 @@ public class FileCopyCommand extends Command {
 		// Set canonical new file path
 		String canonicalNewFilePath;
 		try {
-			 canonicalNewFilePath = Utils.getCanonicalFilePath(tempNewPath, tempUser);
+			 canonicalNewFilePath = Utils.getCanonicalFilePath(tempNewPath, getUsername());
 		} catch (IOException e) {
 			if(Environments.DEBUG_MODE) {
 				e.printStackTrace();
@@ -71,10 +78,10 @@ public class FileCopyCommand extends Command {
 		}
 		
 		// Check permission of user
-		if(!Validator.checkPermission(canonicalOldFilePath, tempUser)) {
+		if(!Validator.checkPermission(canonicalOldFilePath, getUsername())) {
 			throw new NoPermissionException(tempOldPath);
 		}
-		if(!Validator.checkPermission(canonicalNewFilePath, tempUser)) {
+		if(!Validator.checkPermission(canonicalNewFilePath, getUsername())) {
 			throw new NoPermissionException(tempNewPath);
 		}
 		
@@ -97,6 +104,7 @@ public class FileCopyCommand extends Command {
 
 	@Override
 	public String exec() throws ServerException {
+		System.out.println("[SERVER LOG] FILE COPY EXEC");
 		try {
 			//If directory not exist, make dir
 			Path parentFolder = getNewPath().getParent();
@@ -112,9 +120,10 @@ public class FileCopyCommand extends Command {
 			throw new ServerException();
 		}
 		
-		String relativeOldPath = getOldPath().toString().replace(Utils.getUserDir(tempUser), "");
-		String relativeNewPath = getNewPath().toString().replace(Utils.getUserDir(tempUser), "");
+		String relativeOldPath = getOldPath().toString().replace(Utils.getUserDir(getUsername()), "");
+		String relativeNewPath = getNewPath().toString().replace(Utils.getUserDir(getUsername()), "");
 		return String.format("File copied: %s => %s", relativeOldPath, relativeNewPath);
 	}
+
 
 }

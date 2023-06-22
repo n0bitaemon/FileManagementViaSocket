@@ -8,9 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import filemanager.com.server.cmd.Command;
 import filemanager.com.server.cmd.validate.Validator;
-import filemanager.com.server.common.Constants;
 import filemanager.com.server.common.Environments;
 import filemanager.com.server.common.Utils;
 import filemanager.com.server.exception.DirectoryNotFoundException;
@@ -18,9 +16,10 @@ import filemanager.com.server.exception.InvalidNumberOfArgsException;
 import filemanager.com.server.exception.InvalidPathException;
 import filemanager.com.server.exception.NoPermissionException;
 import filemanager.com.server.exception.NotADirectoryException;
+import filemanager.com.server.exception.NotLoggedInException;
 import filemanager.com.server.exception.ServerException;
 
-public class ListFileCommand extends Command {
+public class ListFileCommand extends AuthCommand {
 	private Path path;
 	
 	public Path getPath() {
@@ -33,10 +32,16 @@ public class ListFileCommand extends Command {
 
 	@Override
 	public boolean validate() throws ServerException {
-		System.out.println("[SERVER LOG] LIST FILE");
+		System.out.println("[INFO] LIST FILE VALIDATE");
+		setUsername(Utils.getCurrentUsername(getRemoteAddress().toString()));
+		
 		if(!Validator.validateNumberOfArgs(getArgs(), 1) && !Validator.validateNumberOfArgs(getArgs(), 0)) {
 			int[] validNumberOfArguments = {0, 1};
 			throw new InvalidNumberOfArgsException(validNumberOfArguments, getArgs().size());
+		}
+		
+		if(!isLoggedIn()) {
+			throw new NotLoggedInException();
 		}
 		
 		// Set temporary file path by user input
@@ -50,7 +55,7 @@ public class ListFileCommand extends Command {
 		// Set canonical file path
 		String canonicalFilePath;
 		try {
-			 canonicalFilePath = Utils.getCanonicalFilePath(tempPath, tempUser);
+			 canonicalFilePath = Utils.getCanonicalFilePath(tempPath, getUsername());
 		} catch (IOException e) {
 			if(Environments.DEBUG_MODE) {
 				e.printStackTrace();
@@ -59,7 +64,7 @@ public class ListFileCommand extends Command {
 		}
 		
 		// Check permission of user
-		if(!Validator.checkPermission(canonicalFilePath, tempUser)) {
+		if(!Validator.checkPermission(canonicalFilePath, getUsername())) {
 			throw new NoPermissionException(tempPath);
 		}
 		

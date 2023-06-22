@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import filemanager.com.server.cmd.Command;
 import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.common.Environments;
 import filemanager.com.server.common.Utils;
@@ -13,9 +12,10 @@ import filemanager.com.server.exception.FileAlreadyExistException;
 import filemanager.com.server.exception.InvalidNumberOfArgsException;
 import filemanager.com.server.exception.InvalidPathException;
 import filemanager.com.server.exception.NoPermissionException;
+import filemanager.com.server.exception.NotLoggedInException;
 import filemanager.com.server.exception.ServerException;
 
-public class MakeDirCommand extends Command {
+public class MakeDirCommand extends AuthCommand {
 	private Path path;
 	
 	public MakeDirCommand() {
@@ -29,11 +29,19 @@ public class MakeDirCommand extends Command {
 	public void setPath(Path path) {
 		this.path = path;
 	}
-	
+
 	@Override
 	public boolean validate() throws ServerException {
+		System.out.println("[SERVER LOG] MAKE DIR VALIDATE");
+		
+		setUsername(Utils.getCurrentUsername(getRemoteAddress().toString()));
+		
 		if(!Validator.validateNumberOfArgs(getArgs(), 1)) {
 			throw new InvalidNumberOfArgsException(1, getArgs().size());
+		}
+		
+		if(!isLoggedIn()) {
+			throw new NotLoggedInException();
 		}
 		
 		// Set temporary file path by user input
@@ -42,7 +50,7 @@ public class MakeDirCommand extends Command {
 		// Set canonical file path
 		String canonicalPath;
 		try {
-			 canonicalPath = Utils.getCanonicalFilePath(tempPath, tempUser);
+			 canonicalPath = Utils.getCanonicalFilePath(tempPath, getUsername());
 		} catch (IOException e) {
 			if(Environments.DEBUG_MODE) {
 				e.printStackTrace();
@@ -51,7 +59,7 @@ public class MakeDirCommand extends Command {
 		}
 		
 		// Check permission of user
-		if(!Validator.checkPermission(canonicalPath, tempUser)) {
+		if(!Validator.checkPermission(canonicalPath, getUsername())) {
 			throw new NoPermissionException(tempPath);
 		}
 		
@@ -67,6 +75,7 @@ public class MakeDirCommand extends Command {
 
 	@Override
 	public String exec() throws ServerException {
+		System.out.println("[SERVER LOG] MAKE DIR EXEC");
 		try {
 			Files.createDirectories(getPath());
 		} catch (IOException e) {

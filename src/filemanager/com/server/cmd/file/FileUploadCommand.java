@@ -1,9 +1,8 @@
 package filemanager.com.server.cmd.file;
 
-import filemanager.com.server.cmd.Command;
 import filemanager.com.server.common.Constants;
 
-public class FileUploadCommand extends Command {
+public class FileUploadCommand extends AuthCommand {
 
 	@Override
 	public boolean validate() {

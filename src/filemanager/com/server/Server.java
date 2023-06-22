@@ -16,7 +16,7 @@ import filemanager.com.server.cmd.Command;
 import filemanager.com.server.common.Environments;
 import filemanager.com.server.exception.ServerException;
 
-public class Server {
+public class Server implements AutoCloseable {
     private Selector selector;
     private ByteBuffer buffer;
     
@@ -53,7 +53,7 @@ public class Server {
                 	if(Environments.DEBUG_MODE) {
                 		e.printStackTrace();
                 	}
-                	System.out.println("[ERROR] Message sent from server is too large!");
+                	System.out.println("[ERROR] MESSAGE TOO LONG");
                 } catch (IOException e) {
                 	if(Environments.DEBUG_MODE) {
                 		e.printStackTrace();
@@ -70,25 +70,27 @@ public class Server {
         socketChannel = serverSocketChannel.accept();
         socketChannel.configureBlocking(false);
         socketChannel.register(selector, SelectionKey.OP_READ);
-        System.out.println("New client connected: " + socketChannel.getRemoteAddress());
+        System.out.println("CONNECTED: " + socketChannel.getRemoteAddress());
     }
     
     private void read(SelectionKey key) throws IOException {
+    	if(key == null)
+    		return;
+    	
         SocketChannel socketChannel = (SocketChannel) key.channel();
+        String remoteAddress = socketChannel.getRemoteAddress().toString();
+        
+        // read
         buffer.clear();
-
-        String remoteAddress = null;
         int numBytes = socketChannel.read(buffer);
         if (numBytes == -1) {
             disconnect(key);
             return;
         }
-
-    	remoteAddress = socketChannel.getRemoteAddress().toString();
         
         String request = new String(buffer.array(), 0, numBytes, StandardCharsets.UTF_8).trim();
         
-        System.out.println("Received request from " + remoteAddress + ": " + request);
+        System.out.println("[INFO] < " + remoteAddress + ": " + request);
         key.interestOps(SelectionKey.OP_WRITE);
         key.attach(request);
     }
@@ -106,12 +108,12 @@ public class Server {
         socketChannel.write(buffer);
         
         key.interestOps(SelectionKey.OP_READ);
-        System.out.println("Sent response to " + remoteAddress + ": " + res);
+        System.out.println("[INFO] > " + remoteAddress + ": " + res);
     }
     
     private void disconnect(SelectionKey key) throws IOException {
         SocketChannel socketChannel = (SocketChannel) key.channel();
-        System.out.println("Client disconnected: " + socketChannel.getRemoteAddress());
+        System.out.println("[INFO] DISCONNECTED: " + socketChannel.getRemoteAddress());
         key.cancel();
         socketChannel.close();
     }
@@ -144,24 +146,21 @@ public class Server {
     
     public static void main(String[] args) {
         int port = 3000;
-        Server server;
-		try {
-			server = new Server(port);
-		} catch (IOException e) {
-			if(Environments.DEBUG_MODE) {
-				e.printStackTrace();
-			}
-			System.err.println("[ERROR] Cannot start server");
-			return;
-		}
 
-        try {
+        // ERR05-J: Using try-with-resource
+        try (Server server = new Server(port)) {
 			server.start();
-		} catch (IOException e) {
+		} catch (Exception e) {
+			System.err.println("[ERROR] UNEXPECTED ERROR");
 			if(Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
-			System.err.println("[ERROR] Unexpected error!");
 		}
     }
+
+	@Override
+	public void close() throws Exception {
+		this.selector.close();
+		System.out.println("[INFO] SERVER TERMINATED");
+	}
 }

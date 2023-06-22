@@ -22,7 +22,6 @@ public abstract class Command {
 	
 	private List<String> args;
 	private SocketAddress remoteAddress;
-	public static final String tempUser = "n0bita";
 
 	public Command() {
 		

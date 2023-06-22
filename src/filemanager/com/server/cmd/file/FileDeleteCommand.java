@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
-import filemanager.com.server.cmd.Command;
 import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.common.Environments;
 import filemanager.com.server.common.Utils;
@@ -16,9 +15,10 @@ import filemanager.com.server.exception.FileNotFoundException;
 import filemanager.com.server.exception.InvalidNumberOfArgsException;
 import filemanager.com.server.exception.InvalidPathException;
 import filemanager.com.server.exception.NoPermissionException;
+import filemanager.com.server.exception.NotLoggedInException;
 import filemanager.com.server.exception.ServerException;
 
-public class FileDeleteCommand extends Command{
+public class FileDeleteCommand extends AuthCommand{
 	// delete /folder/file.txt n0bita
 	private Path path;
 	
@@ -29,12 +29,17 @@ public class FileDeleteCommand extends Command{
 	public void setPath(Path path) {
 		this.path = path;
 	}
-	
+
 	public boolean validate() throws ServerException {
 		System.out.println("[SERVER LOG] FILE DELETION VALIDATE");
+		setUsername(Utils.getCurrentUsername(getRemoteAddress().toString()));
 		
 		if(!Validator.validateNumberOfArgs(getArgs(), 1)) {
 			throw new InvalidNumberOfArgsException(1, getArgs().size());
+		}
+		
+		if(!isLoggedIn()) {
+			throw new NotLoggedInException();
 		}
 		
 		// Set temporary file path by user input
@@ -43,7 +48,7 @@ public class FileDeleteCommand extends Command{
 		// Set canonical file path
 		String canonicalFilePath;
 		try {
-			 canonicalFilePath = Utils.getCanonicalFilePath(tempPath, tempUser);
+			 canonicalFilePath = Utils.getCanonicalFilePath(tempPath, getUsername());
 		} catch (IOException e) {
 			if(Environments.DEBUG_MODE) {
 				e.printStackTrace();
@@ -52,7 +57,7 @@ public class FileDeleteCommand extends Command{
 		}
 		
 		// Check permission of user
-		if(!Validator.checkPermission(canonicalFilePath, tempUser)) {
+		if(!Validator.checkPermission(canonicalFilePath, getUsername())) {
 			throw new NoPermissionException(tempPath);
 		}
 		
@@ -72,7 +77,7 @@ public class FileDeleteCommand extends Command{
 	}
 
 	public String exec() throws ServerException {
-		System.out.println("[SERVER LOG] FILE DELETION EXECUTION");
+		System.out.println("[SERVER LOG] FILE DELETION EXEC");
 
 		try {
 			Files.walkFileTree(getPath(), new SimpleFileVisitor<Path>() {
