@@ -1,6 +1,7 @@
 package filemanager.com.server.cmd;
 
 import java.net.SocketAddress;
+import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import filemanager.com.server.exception.ServerException;
 
 public abstract class Command {
 
+	private SocketChannel socketChannel;
 	private List<String> args;
 	private SocketAddress remoteAddress;
 
@@ -27,15 +29,8 @@ public abstract class Command {
 
 	}
 
-	public Command(SocketAddress ipAddress) {
-		this.remoteAddress = ipAddress;
-	}
-
-	public Command(List<String> args) {
-		this.args = args;
-	}
-
-	public Command(SocketAddress ipAddress, List<String> args) {
+	public Command(SocketChannel socketChannel, SocketAddress ipAddress, List<String> args) {
+		this.socketChannel = socketChannel;
 		this.remoteAddress = ipAddress;
 		this.args = args;
 	}
@@ -56,11 +51,19 @@ public abstract class Command {
 		this.remoteAddress = remoteAddress;
 	}
 
+	public SocketChannel getSocketChannel() {
+		return socketChannel;
+	}
+
+	public void setSocketChannel(SocketChannel socketChannel) {
+		this.socketChannel = socketChannel;
+	}
+
 	public abstract boolean validate() throws ServerException;
 
 	public abstract String exec() throws ServerException;
 
-	public static Command parseCommandFromString(String msg, SocketAddress remoteAddress) {
+	public static Command parseCommandFromString(String msg, SocketAddress remoteAddress, SocketChannel socketChannel) {
 		// Analyze msg and detect cmd type
 		String msgArr[] = msg.split(" ");
 		Command cmd;
@@ -120,6 +123,7 @@ public abstract class Command {
 		}
 		cmd.setArgs(args);
 		cmd.setRemoteAddress(remoteAddress);
+		cmd.setSocketChannel(socketChannel);
 
 		return cmd;
 	}

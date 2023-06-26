@@ -99,7 +99,7 @@ public class Server implements AutoCloseable {
 		SocketChannel socketChannel = (SocketChannel) key.channel();
 		SocketAddress remoteAddress = socketChannel.getRemoteAddress();
 		String req = (String) key.attachment();
-		String res = getResponse(req, remoteAddress);
+		String res = getResponse(req, remoteAddress, socketChannel);
 
 		buffer.clear();
 		buffer.put(res.getBytes());
@@ -118,8 +118,8 @@ public class Server implements AutoCloseable {
 		socketChannel.close();
 	}
 
-	private String getResponse(String req, SocketAddress remoteAddress) {
-		Command cmd = Command.parseCommandFromString(req, remoteAddress);
+	private String getResponse(String req, SocketAddress remoteAddress, SocketChannel socketChannel) {
+		Command cmd = Command.parseCommandFromString(req, remoteAddress, socketChannel);
 		if (cmd != null) {
 			// Only return validateResponse if there is an error in validation step
 			try {
