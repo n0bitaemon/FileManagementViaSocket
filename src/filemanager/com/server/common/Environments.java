@@ -1,6 +1,10 @@
 package filemanager.com.server.common;
 
 public class Environments {
+	private Environments() {
+		
+	}
+	
 	public static final boolean DEBUG_MODE = true;
 
 	public static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";

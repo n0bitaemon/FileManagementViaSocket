@@ -5,8 +5,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import filemanager.com.server.auth.Authentication;
 import filemanager.com.server.cmd.validate.Validator;
+import filemanager.com.server.common.Constants;
 import filemanager.com.server.common.Environments;
 import filemanager.com.server.common.Utils;
 import filemanager.com.server.exception.FileNotFoundException;
@@ -17,11 +21,10 @@ import filemanager.com.server.exception.NotLoggedInException;
 import filemanager.com.server.exception.ServerException;
 
 public class FileCopyCommand extends AuthCommand {
+	private static final Logger LOGGER = LogManager.getLogger(FileCopyCommand.class);
+
 	private Path oldPath;
 	private Path newPath;
-
-	public FileCopyCommand() {
-	}
 
 	public Path getOldPath() {
 		return oldPath;
@@ -41,7 +44,8 @@ public class FileCopyCommand extends AuthCommand {
 
 	@Override
 	public boolean validate() throws ServerException {
-		System.out.println("[SERVER LOG] FILE COPY VALIDATE");
+		LOGGER.info("{}: validate command - {}", getRemoteAddress(), Constants.FILE_COPY_CMD);
+
 		setUsername(Utils.getCurrentUsername(getRemoteAddress()));
 
 		if (!Validator.validateNumberOfArgs(getArgs(), 2)) {
@@ -105,7 +109,8 @@ public class FileCopyCommand extends AuthCommand {
 
 	@Override
 	public String exec() throws ServerException {
-		System.out.println("[SERVER LOG] FILE COPY EXEC");
+		LOGGER.info("{}: exec command - {}", getRemoteAddress(), Constants.FILE_COPY_CMD);
+		
 		try {
 			// If directory not exist, make dir
 			Path parentFolder = getNewPath().getParent();

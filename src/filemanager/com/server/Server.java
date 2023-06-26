@@ -12,11 +12,16 @@ import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import filemanager.com.server.cmd.Command;
 import filemanager.com.server.common.Environments;
 import filemanager.com.server.exception.ServerException;
 
 public class Server implements AutoCloseable {
+	private static final Logger LOGGER = LogManager.getLogger(Server.class);
+	
 	private Selector selector;
 	private ByteBuffer buffer;
 
@@ -27,7 +32,7 @@ public class Server implements AutoCloseable {
 		serverSocketChannel.configureBlocking(false);
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 		buffer = ByteBuffer.allocate(1024);
-		System.out.println("Server started on port " + port);
+		LOGGER.info("Server started on port {}", port);
 	}
 
 	public void start() throws IOException {
@@ -53,7 +58,7 @@ public class Server implements AutoCloseable {
 					if (Environments.DEBUG_MODE) {
 						e.printStackTrace();
 					}
-					System.out.println("[ERROR] MESSAGE TOO LONG");
+					LOGGER.error("Message too long");
 				} catch (IOException e) {
 					if (Environments.DEBUG_MODE) {
 						e.printStackTrace();
@@ -70,7 +75,7 @@ public class Server implements AutoCloseable {
 		socketChannel = serverSocketChannel.accept();
 		socketChannel.configureBlocking(false);
 		socketChannel.register(selector, SelectionKey.OP_READ);
-		System.out.println("CONNECTED: " + socketChannel.getRemoteAddress());
+		LOGGER.info("Connected: {}", socketChannel.getRemoteAddress());
 	}
 
 	private void read(SelectionKey key) throws IOException {
@@ -90,7 +95,7 @@ public class Server implements AutoCloseable {
 
 		String request = new String(buffer.array(), 0, numBytes, StandardCharsets.UTF_8).trim();
 
-		System.out.println("[INFO] < " + remoteAddress + ": " + request);
+		LOGGER.info("Request from {}: {}", remoteAddress, request);
 		key.interestOps(SelectionKey.OP_WRITE);
 		key.attach(request);
 	}
@@ -108,12 +113,12 @@ public class Server implements AutoCloseable {
 		socketChannel.write(buffer);
 
 		key.interestOps(SelectionKey.OP_READ);
-		System.out.println("[INFO] > " + remoteAddress + ": " + res);
+		LOGGER.info("Response to {}: {}", remoteAddress, res);
 	}
 
 	private void disconnect(SelectionKey key) throws IOException {
 		SocketChannel socketChannel = (SocketChannel) key.channel();
-		System.out.println("[INFO] DISCONNECTED: " + socketChannel.getRemoteAddress());
+		LOGGER.info("DISCONNECTED: {}", socketChannel.getRemoteAddress());
 		key.cancel();
 		socketChannel.close();
 	}
@@ -151,7 +156,7 @@ public class Server implements AutoCloseable {
 		try (Server server = new Server(port)) {
 			server.start();
 		} catch (Exception e) {
-			System.err.println("[ERROR] UNEXPECTED ERROR");
+			LOGGER.error("Unexpected error while starting server");
 			if (Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
@@ -161,6 +166,6 @@ public class Server implements AutoCloseable {
 	@Override
 	public void close() throws Exception {
 		this.selector.close();
-		System.out.println("[INFO] SERVER TERMINATED");
+		LOGGER.info("Server is closed");
 	}
 }

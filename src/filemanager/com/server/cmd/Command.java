@@ -25,17 +25,17 @@ public abstract class Command {
 	private List<String> args;
 	private SocketAddress remoteAddress;
 
-	public Command() {
+	protected Command() {
 
 	}
 
-	public Command(SocketChannel socketChannel, SocketAddress ipAddress, List<String> args) {
+	protected Command(SocketChannel socketChannel, SocketAddress ipAddress, List<String> args) {
 		this.socketChannel = socketChannel;
 		this.remoteAddress = ipAddress;
 		this.args = args;
 	}
 
-	public List<String> getArgs() {
+	protected List<String> getArgs() {
 		return args;
 	}
 
@@ -65,7 +65,7 @@ public abstract class Command {
 
 	public static Command parseCommandFromString(String msg, SocketAddress remoteAddress, SocketChannel socketChannel) {
 		// Analyze msg and detect cmd type
-		String msgArr[] = msg.split(" ");
+		String[] msgArr = msg.split(" ");
 		Command cmd;
 
 		String cmdNameRaw = msgArr[0];
@@ -108,7 +108,7 @@ public abstract class Command {
 			cmd = new MakeDirCommand();
 			break;
 		}
-		case Constants.DIR_LIST_FILE: {
+		case Constants.DIR_LIST_FILE_CMD: {
 			cmd = new ListFileCommand();
 			break;
 		}
@@ -117,7 +117,7 @@ public abstract class Command {
 		}
 		}
 
-		List<String> args = new ArrayList<String>();
+		List<String> args = new ArrayList<>();
 		for (int i = 1; i < msgArr.length; i++) {
 			args.add(msgArr[i]);
 		}

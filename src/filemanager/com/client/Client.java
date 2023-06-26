@@ -37,8 +37,7 @@ public class Client implements AutoCloseable {
 		System.out.println("previous");
 		int numBytes = socketChannel.read(buffer);
 		System.out.println("after");
-		String response = new String(buffer.array(), 0, numBytes, StandardCharsets.UTF_8).trim();
-		return response;
+		return new String(buffer.array(), 0, numBytes, StandardCharsets.UTF_8).trim();
 	}
 
 	public void disconnect() throws IOException {

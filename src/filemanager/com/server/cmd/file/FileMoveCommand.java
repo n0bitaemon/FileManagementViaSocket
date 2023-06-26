@@ -5,6 +5,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import filemanager.com.server.auth.Authentication;
 import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.common.Constants;
@@ -19,11 +22,10 @@ import filemanager.com.server.exception.NotLoggedInException;
 import filemanager.com.server.exception.ServerException;
 
 public class FileMoveCommand extends AuthCommand {
+	private static final Logger LOGGER = LogManager.getLogger(FileMoveCommand.class);
+
 	private Path oldPath;
 	private Path newPath;
-
-	public FileMoveCommand() {
-	}
 
 	public Path getOldPath() {
 		return oldPath;
@@ -43,7 +45,7 @@ public class FileMoveCommand extends AuthCommand {
 
 	@Override
 	public boolean validate() throws ServerException {
-		System.out.println("[SERVER LOG] FILE MOVE VALIDATE");
+		LOGGER.info("{}: validate command - {}", getRemoteAddress(), Constants.FILE_MOVE_CMD);
 		setUsername(Utils.getCurrentUsername(getRemoteAddress()));
 		if (!Validator.validateNumberOfArgs(getArgs(), 2)) {
 			throw new InvalidNumberOfArgsException(2, getArgs().size());
@@ -105,7 +107,7 @@ public class FileMoveCommand extends AuthCommand {
 
 	@Override
 	public String exec() throws ServerException {
-		System.out.println("[SERVER LOG] FILE MOVE EXEC");
+		LOGGER.info("{}: exec command - {}", getRemoteAddress(), Constants.FILE_MOVE_CMD);
 		try {
 			// If directory not exist, make dir
 			if (!Files.exists(getNewPath().getParent())) {

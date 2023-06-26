@@ -8,8 +8,12 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import filemanager.com.server.auth.Authentication;
 import filemanager.com.server.cmd.validate.Validator;
+import filemanager.com.server.common.Constants;
 import filemanager.com.server.common.Environments;
 import filemanager.com.server.common.Utils;
 import filemanager.com.server.exception.FileNotFoundException;
@@ -20,6 +24,8 @@ import filemanager.com.server.exception.NotLoggedInException;
 import filemanager.com.server.exception.ServerException;
 
 public class FileDeleteCommand extends AuthCommand {
+	private static final Logger LOGGER = LogManager.getLogger(FileDeleteCommand.class);
+
 	// delete /folder/file.txt n0bita
 	private Path path;
 
@@ -32,7 +38,8 @@ public class FileDeleteCommand extends AuthCommand {
 	}
 
 	public boolean validate() throws ServerException {
-		System.out.println("[SERVER LOG] FILE DELETION VALIDATE");
+		LOGGER.info("{}: validate command - {}", getRemoteAddress(), Constants.FILE_DELETE_CMD);
+
 		setUsername(Utils.getCurrentUsername(getRemoteAddress()));
 
 		if (!Validator.validateNumberOfArgs(getArgs(), 1)) {
@@ -77,7 +84,7 @@ public class FileDeleteCommand extends AuthCommand {
 	}
 
 	public String exec() throws ServerException {
-		System.out.println("[SERVER LOG] FILE DELETION EXEC");
+		LOGGER.info("{}: exec command - {}", getRemoteAddress(), Constants.FILE_DELETE_CMD);
 
 		try {
 			Files.walkFileTree(getPath(), new SimpleFileVisitor<Path>() {

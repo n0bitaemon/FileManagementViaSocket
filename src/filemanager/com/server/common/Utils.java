@@ -11,10 +11,13 @@ import java.text.Normalizer.Form;
 import filemanager.com.server.auth.Authentication;
 
 public class Utils {
+	private Utils() {
+		
+	}
+	
 	public static boolean validateFilePath(String filePath) {
 		Path path = Paths.get(filePath);
-		boolean isValid = path.isAbsolute() && path.startsWith("/");
-		return isValid;
+		return path.isAbsolute() && path.startsWith("/");
 	}
 
 	public static String getCanonicalFilePath(String path, String userDir) throws IOException {

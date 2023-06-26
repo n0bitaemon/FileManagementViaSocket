@@ -5,8 +5,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import filemanager.com.server.auth.Authentication;
 import filemanager.com.server.cmd.validate.Validator;
+import filemanager.com.server.common.Constants;
 import filemanager.com.server.common.Environments;
 import filemanager.com.server.common.Utils;
 import filemanager.com.server.exception.FileAlreadyExistException;
@@ -17,11 +21,9 @@ import filemanager.com.server.exception.NotLoggedInException;
 import filemanager.com.server.exception.ServerException;
 
 public class MakeDirCommand extends AuthCommand {
+	private static final Logger LOGGER = LogManager.getLogger(MakeDirCommand.class);
+
 	private Path path;
-
-	public MakeDirCommand() {
-
-	}
 
 	public Path getPath() {
 		return path;
@@ -33,7 +35,7 @@ public class MakeDirCommand extends AuthCommand {
 
 	@Override
 	public boolean validate() throws ServerException {
-		System.out.println("[SERVER LOG] MAKE DIR VALIDATE");
+		LOGGER.info("{}: validate command - {}", getRemoteAddress(), Constants.DIR_MAKE_CMD);
 
 		setUsername(Utils.getCurrentUsername(getRemoteAddress()));
 
@@ -76,7 +78,8 @@ public class MakeDirCommand extends AuthCommand {
 
 	@Override
 	public String exec() throws ServerException {
-		System.out.println("[SERVER LOG] MAKE DIR EXEC");
+		LOGGER.info("{}: exec command - {}", getRemoteAddress(), Constants.DIR_MAKE_CMD);
+
 		try {
 			Files.createDirectories(getPath());
 		} catch (IOException e) {

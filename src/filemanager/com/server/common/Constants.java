@@ -1,6 +1,10 @@
 package filemanager.com.server.common;
 
 public class Constants {
+	private Constants() {
+		
+	}
+	
 	public static final String AUTH_LOGIN_CMD = "login";
 	public static final String AUTH_LOGOUT_CMD = "logout";
 	public static final String AUTH_REGISTER_CMD = "reg";
@@ -10,7 +14,7 @@ public class Constants {
 	public static final String FILE_MOVE_CMD = "mv";
 	public static final String FILE_COPY_CMD = "cp";
 	public static final String DIR_MAKE_CMD = "mkdir";
-	public static final String DIR_LIST_FILE = "ls";
+	public static final String DIR_LIST_FILE_CMD = "ls";
 
 	public static final String FILE_SEPARATOR = System.getProperty("file.separator");
 	public static final String APP_DIR = System.getProperty("user.dir");
