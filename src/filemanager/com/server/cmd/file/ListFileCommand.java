@@ -29,23 +29,15 @@ public class ListFileCommand extends AuthCommand {
 	
 	private Path path;
 
-	public Path getPath() {
-		return this.path;
-	}
-
-	public void setPath(Path path) {
-		this.path = path;
-	}
-
 	@Override
 	public boolean validate() throws ServerException {
-		LOGGER.info("{}: validate command - {}", getRemoteAddress(), Constants.DIR_LIST_FILE_CMD);
+		LOGGER.info("{}: validate command - {}", this.remoteAddress, Constants.DIR_LIST_FILE_CMD);
 		
-		setUsername(Utils.getCurrentUsername(getRemoteAddress()));
+		setUsername(Utils.getCurrentUsername(this.remoteAddress));
 
-		if (!Validator.validateNumberOfArgs(getArgs(), 1) && !Validator.validateNumberOfArgs(getArgs(), 0)) {
+		if (!Validator.validateNumberOfArgs(this.args, 1) && !Validator.validateNumberOfArgs(this.args, 0)) {
 			int[] validNumberOfArguments = { 0, 1 };
-			throw new InvalidNumberOfArgsException(validNumberOfArguments, getArgs().size());
+			throw new InvalidNumberOfArgsException(validNumberOfArguments, this.args.size());
 		}
 
 		if (!Authentication.accIsLoging(getUsername())) {
@@ -54,8 +46,8 @@ public class ListFileCommand extends AuthCommand {
 
 		// Set temporary file path by user input
 		String tempPath;
-		if (getArgs().size() == 1) {
-			tempPath = getArgs().get(0);
+		if (this.args.size() == 1) {
+			tempPath = this.args.get(0);
 		} else {
 			tempPath = "/";
 		}
@@ -78,13 +70,13 @@ public class ListFileCommand extends AuthCommand {
 
 		// Set up valid path property
 		Path canonicalFile = Paths.get(canonicalFilePath);
-		setPath(canonicalFile);
+		this.path = canonicalFile;
 
-		if (!Files.exists(getPath())) {
+		if (!Files.exists(this.path)) {
 			throw new DirectoryNotFoundException(tempPath);
 		}
 
-		if (!Files.isDirectory(getPath())) {
+		if (!Files.isDirectory(this.path)) {
 			throw new NotADirectoryException(tempPath);
 		}
 		return true;
@@ -92,12 +84,12 @@ public class ListFileCommand extends AuthCommand {
 
 	@Override
 	public String exec() throws ServerException {
-		LOGGER.info("{}: exec command - {}", getRemoteAddress(), Constants.DIR_LIST_FILE_CMD);
+		LOGGER.info("{}: exec command - {}", this.remoteAddress, Constants.DIR_LIST_FILE_CMD);
 
 		StringBuilder filesResponse = new StringBuilder();
 
 		List<Path> files = new ArrayList<>();
-		try (DirectoryStream<Path> stream = Files.newDirectoryStream(getPath());) {
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(this.path);) {
 			for (Path entry : stream) {
 				files.add(entry);
 			}

@@ -9,20 +9,12 @@ import filemanager.com.server.exception.InvalidNumberOfArgsException;
 public class FileUploadCommand extends AuthCommand {
 	private Path uploadedPath;
 
-	public Path getUploadedPath() {
-		return uploadedPath;
-	}
-
-	public void setUploadedPath(Path uploadedPath) {
-		this.uploadedPath = uploadedPath;
-	}
-
 	@Override
 	public boolean validate() throws InvalidNumberOfArgsException {
 		System.out.println("[SERVER LOG] FILE UPLOAD VALIDATION");
 		
-		if(!Validator.validateNumberOfArgs(getArgs(), 2)) {
-			throw new InvalidNumberOfArgsException(2, getArgs().size());
+		if(!Validator.validateNumberOfArgs(this.args, 2)) {
+			throw new InvalidNumberOfArgsException(2, this.args.size());
 		}
 		
 		return true;

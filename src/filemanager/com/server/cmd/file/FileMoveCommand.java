@@ -27,28 +27,14 @@ public class FileMoveCommand extends AuthCommand {
 	private Path oldPath;
 	private Path newPath;
 
-	public Path getOldPath() {
-		return oldPath;
-	}
-
-	public void setOldPath(Path oldPath) {
-		this.oldPath = oldPath;
-	}
-
-	public Path getNewPath() {
-		return newPath;
-	}
-
-	public void setNewPath(Path newPath) {
-		this.newPath = newPath;
-	}
-
 	@Override
 	public boolean validate() throws ServerException {
-		LOGGER.info("{}: validate command - {}", getRemoteAddress(), Constants.FILE_MOVE_CMD);
-		setUsername(Utils.getCurrentUsername(getRemoteAddress()));
-		if (!Validator.validateNumberOfArgs(getArgs(), 2)) {
-			throw new InvalidNumberOfArgsException(2, getArgs().size());
+		LOGGER.info("{}: validate command - {}", this.remoteAddress, Constants.FILE_MOVE_CMD);
+		
+		setUsername(Utils.getCurrentUsername(this.remoteAddress));
+		
+		if (!Validator.validateNumberOfArgs(this.args, 2)) {
+			throw new InvalidNumberOfArgsException(2, this.args.size());
 		}
 
 		if (!Authentication.accIsLoging(getUsername())) {
@@ -56,8 +42,8 @@ public class FileMoveCommand extends AuthCommand {
 		}
 
 		// Set temporary file path by user input
-		String tempOldPath = getArgs().get(0);
-		String tempNewPath = getArgs().get(1);
+		String tempOldPath = this.args.get(0);
+		String tempNewPath = this.args.get(1);
 
 		// Set canonical old file path
 		String canonicalOldFilePath;
@@ -92,14 +78,14 @@ public class FileMoveCommand extends AuthCommand {
 		// Set up valid path property
 		Path canonicalOldFile = Paths.get(canonicalOldFilePath);
 		Path canonicalNewFile = Paths.get(canonicalNewFilePath);
-		setOldPath(canonicalOldFile);
-		setNewPath(canonicalNewFile);
+		this.oldPath = canonicalOldFile;
+		this.newPath = canonicalNewFile;
 
-		if (!Files.exists(getOldPath())) {
+		if (!Files.exists(this.oldPath)) {
 			throw new FileNotFoundException(tempOldPath);
 		}
 
-		if (Files.exists(getNewPath())) {
+		if (Files.exists(this.newPath)) {
 			throw new FileAlreadyExistException(tempNewPath);
 		}
 		return true;
@@ -107,15 +93,15 @@ public class FileMoveCommand extends AuthCommand {
 
 	@Override
 	public String exec() throws ServerException {
-		LOGGER.info("{}: exec command - {}", getRemoteAddress(), Constants.FILE_MOVE_CMD);
+		LOGGER.info("{}: exec command - {}", this.remoteAddress, Constants.FILE_MOVE_CMD);
 		try {
 			// If directory not exist, make dir
-			if (!Files.exists(getNewPath().getParent())) {
-				Files.createDirectories(getNewPath());
+			if (!Files.exists(this.newPath.getParent())) {
+				Files.createDirectories(this.newPath);
 				System.out.println("Directory not exist, created");
 			}
 
-			Files.move(getOldPath(), getNewPath());
+			Files.move(this.oldPath, this.newPath);
 		} catch (IOException e) {
 			if (Environments.DEBUG_MODE) {
 				e.printStackTrace();
@@ -123,8 +109,8 @@ public class FileMoveCommand extends AuthCommand {
 			throw new ServerException();
 		}
 
-		String relativeOldPath = getOldPath().toString().replace(Constants.STORAGE_DIR + getUsername(), "");
-		String relativeNewPath = getNewPath().toString().replace(Constants.STORAGE_DIR + getUsername(), "");
+		String relativeOldPath = this.oldPath.toString().replace(Constants.STORAGE_DIR + getUsername(), "");
+		String relativeNewPath = this.newPath.toString().replace(Constants.STORAGE_DIR + getUsername(), "");
 		return String.format("Moved: %s => %s", relativeOldPath, relativeNewPath);
 	}
 

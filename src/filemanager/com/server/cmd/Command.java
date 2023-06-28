@@ -21,9 +21,9 @@ import filemanager.com.server.exception.ServerException;
 
 public abstract class Command {
 
-	private SocketChannel socketChannel;
-	private List<String> args;
-	private SocketAddress remoteAddress;
+	protected SocketChannel socketChannel;
+	protected List<String> args;
+	protected SocketAddress remoteAddress;
 
 	protected Command() {
 
@@ -33,30 +33,6 @@ public abstract class Command {
 		this.socketChannel = socketChannel;
 		this.remoteAddress = ipAddress;
 		this.args = args;
-	}
-
-	protected List<String> getArgs() {
-		return args;
-	}
-
-	public void setArgs(List<String> args) {
-		this.args = args;
-	}
-
-	public SocketAddress getRemoteAddress() {
-		return remoteAddress;
-	}
-
-	public void setRemoteAddress(SocketAddress remoteAddress) {
-		this.remoteAddress = remoteAddress;
-	}
-
-	public SocketChannel getSocketChannel() {
-		return socketChannel;
-	}
-
-	public void setSocketChannel(SocketChannel socketChannel) {
-		this.socketChannel = socketChannel;
 	}
 
 	public abstract boolean validate() throws ServerException;
@@ -69,8 +45,8 @@ public abstract class Command {
 		Command cmd;
 
 		String cmdNameRaw = msgArr[0];
-		String cmdNameOnlyAlphabe = Utils.removeNonAlphabetCharacter(cmdNameRaw);
-		String cmdName = Utils.normalizeString(cmdNameOnlyAlphabe);
+		String cmdNameOnlyAlphabet = Utils.removeNonAlphabetCharacter(cmdNameRaw);
+		String cmdName = Utils.normalizeString(cmdNameOnlyAlphabet);
 		switch (cmdName) {
 		case Constants.AUTH_LOGIN_CMD: {
 			cmd = new LoginCommand();
@@ -121,9 +97,9 @@ public abstract class Command {
 		for (int i = 1; i < msgArr.length; i++) {
 			args.add(msgArr[i]);
 		}
-		cmd.setArgs(args);
-		cmd.setRemoteAddress(remoteAddress);
-		cmd.setSocketChannel(socketChannel);
+		cmd.args = args;
+		cmd.remoteAddress = remoteAddress;
+		cmd.socketChannel = socketChannel;
 
 		return cmd;
 	}

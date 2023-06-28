@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.channels.NotYetConnectedException;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Scanner;
 
 public class Client implements AutoCloseable {
@@ -54,6 +57,26 @@ public class Client implements AutoCloseable {
 			cmd = sc.nextLine();
 			if (cmd.equalsIgnoreCase("exit")) {
 				break;
+			}
+			String[] msgArr = cmd.split(" ");
+			if(msgArr[0].equalsIgnoreCase("download")) {
+				String sourcePathStr = msgArr[1];
+	            String destPathStr = msgArr[2];
+	            ByteBuffer buffer = ByteBuffer.wrap(("DOWNLOAD " + sourcePathStr).getBytes());
+	            socketChannel.write(buffer);
+
+	            FileChannel fileChannel = FileChannel.open(Paths.get("downloaded", destPathStr), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+	            ByteBuffer fileBuffer = ByteBuffer.allocate(1024);
+
+	            while (socketChannel.read(fileBuffer) > 0) {
+	                fileBuffer.flip();
+	                fileChannel.write(fileBuffer);
+	                fileBuffer.clear();
+	            }
+
+	            fileChannel.close();
+				
+				continue;
 			}
 			try {
 				res = send(cmd);

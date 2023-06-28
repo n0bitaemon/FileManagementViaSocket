@@ -26,30 +26,14 @@ public class FileCopyCommand extends AuthCommand {
 	private Path oldPath;
 	private Path newPath;
 
-	public Path getOldPath() {
-		return oldPath;
-	}
-
-	public void setOldPath(Path oldPath) {
-		this.oldPath = oldPath;
-	}
-
-	public Path getNewPath() {
-		return newPath;
-	}
-
-	public void setNewPath(Path newPath) {
-		this.newPath = newPath;
-	}
-
 	@Override
 	public boolean validate() throws ServerException {
-		LOGGER.info("{}: validate command - {}", getRemoteAddress(), Constants.FILE_COPY_CMD);
+		LOGGER.info("{}: validate command - {}", this.remoteAddress, Constants.FILE_COPY_CMD);
 
-		setUsername(Utils.getCurrentUsername(getRemoteAddress()));
+		setUsername(Utils.getCurrentUsername(this.remoteAddress));
 
-		if (!Validator.validateNumberOfArgs(getArgs(), 2)) {
-			throw new InvalidNumberOfArgsException(2, getArgs().size());
+		if (!Validator.validateNumberOfArgs(this.args, 2)) {
+			throw new InvalidNumberOfArgsException(2, this.args.size());
 		}
 
 		if (!Authentication.accIsLoging(getUsername())) {
@@ -57,8 +41,8 @@ public class FileCopyCommand extends AuthCommand {
 		}
 
 		// Set temporary file path by user input
-		String tempOldPath = getArgs().get(0);
-		String tempNewPath = getArgs().get(1);
+		String tempOldPath = this.args.get(0);
+		String tempNewPath = this.args.get(1);
 
 		// Set canonical old file path
 		String canonicalOldFilePath;
@@ -93,14 +77,14 @@ public class FileCopyCommand extends AuthCommand {
 		// Set up valid path property
 		Path canonicalOldFile = Paths.get(canonicalOldFilePath);
 		Path canonicalNewFile = Paths.get(canonicalNewFilePath);
-		setOldPath(canonicalOldFile);
-		setNewPath(canonicalNewFile);
+		this.oldPath = canonicalOldFile;
+		this.newPath = canonicalNewFile;
 
-		if (!Files.exists(getOldPath())) {
+		if (!Files.exists(this.oldPath)) {
 			throw new FileNotFoundException(tempOldPath);
 		}
 
-		if (Files.exists(getNewPath())) {
+		if (Files.exists(this.newPath)) {
 			throw new FileNotFoundException(tempNewPath);
 		}
 
@@ -109,16 +93,16 @@ public class FileCopyCommand extends AuthCommand {
 
 	@Override
 	public String exec() throws ServerException {
-		LOGGER.info("{}: exec command - {}", getRemoteAddress(), Constants.FILE_COPY_CMD);
+		LOGGER.info("{}: exec command - {}", this.remoteAddress, Constants.FILE_COPY_CMD);
 		
 		try {
 			// If directory not exist, make dir
-			Path parentFolder = getNewPath().getParent();
+			Path parentFolder = this.newPath.getParent();
 			if (!Files.exists(parentFolder)) {
 				Files.createDirectories(parentFolder);
 			}
 
-			Files.copy(getOldPath(), getNewPath());
+			Files.copy(this.oldPath, this.newPath);
 		} catch (IOException e) {
 			if (Environments.DEBUG_MODE) {
 				e.printStackTrace();
@@ -126,8 +110,8 @@ public class FileCopyCommand extends AuthCommand {
 			throw new ServerException();
 		}
 
-		String relativeOldPath = getOldPath().toString().replace(Utils.getUserDir(getUsername()), "");
-		String relativeNewPath = getNewPath().toString().replace(Utils.getUserDir(getUsername()), "");
+		String relativeOldPath = this.oldPath.toString().replace(Utils.getUserDir(getUsername()), "");
+		String relativeNewPath = this.newPath.toString().replace(Utils.getUserDir(getUsername()), "");
 		return String.format("File copied: %s => %s", relativeOldPath, relativeNewPath);
 	}
 

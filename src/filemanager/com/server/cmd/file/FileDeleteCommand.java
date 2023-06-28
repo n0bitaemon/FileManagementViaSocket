@@ -29,21 +29,13 @@ public class FileDeleteCommand extends AuthCommand {
 	// delete /folder/file.txt n0bita
 	private Path path;
 
-	public Path getPath() {
-		return path;
-	}
-
-	public void setPath(Path path) {
-		this.path = path;
-	}
-
 	public boolean validate() throws ServerException {
-		LOGGER.info("{}: validate command - {}", getRemoteAddress(), Constants.FILE_DELETE_CMD);
+		LOGGER.info("{}: validate command - {}", this.remoteAddress, Constants.FILE_DELETE_CMD);
 
-		setUsername(Utils.getCurrentUsername(getRemoteAddress()));
+		setUsername(Utils.getCurrentUsername(this.remoteAddress));
 
-		if (!Validator.validateNumberOfArgs(getArgs(), 1)) {
-			throw new InvalidNumberOfArgsException(1, getArgs().size());
+		if (!Validator.validateNumberOfArgs(this.args, 1)) {
+			throw new InvalidNumberOfArgsException(1, this.args.size());
 		}
 
 		if (!Authentication.accIsLoging(getUsername())) {
@@ -51,7 +43,7 @@ public class FileDeleteCommand extends AuthCommand {
 		}
 
 		// Set temporary file path by user input
-		String tempPath = getArgs().get(0);
+		String tempPath = this.args.get(0);
 
 		// Set canonical file path
 		String canonicalFilePath;
@@ -71,10 +63,10 @@ public class FileDeleteCommand extends AuthCommand {
 
 		// Set up valid path property
 		Path canonicalFile = Paths.get(canonicalFilePath);
-		setPath(canonicalFile);
+		this.path = canonicalFile;
 
 		// Validate file path
-		if (!Files.exists(getPath())) {
+		if (!Files.exists(this.path)) {
 			throw new FileNotFoundException(tempPath);
 		}
 
@@ -84,10 +76,10 @@ public class FileDeleteCommand extends AuthCommand {
 	}
 
 	public String exec() throws ServerException {
-		LOGGER.info("{}: exec command - {}", getRemoteAddress(), Constants.FILE_DELETE_CMD);
+		LOGGER.info("{}: exec command - {}", this.remoteAddress, Constants.FILE_DELETE_CMD);
 
 		try {
-			Files.walkFileTree(getPath(), new SimpleFileVisitor<Path>() {
+			Files.walkFileTree(this.path, new SimpleFileVisitor<Path>() {
 				@Override
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attr) throws IOException {
 					Files.delete(file);
@@ -107,7 +99,7 @@ public class FileDeleteCommand extends AuthCommand {
 			throw new ServerException();
 		}
 
-		return String.format("Deleted: %s", getPath().getFileName());
+		return String.format("Deleted: %s", this.path.getFileName());
 	}
 
 }

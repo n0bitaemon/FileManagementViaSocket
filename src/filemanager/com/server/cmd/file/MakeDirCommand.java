@@ -25,22 +25,14 @@ public class MakeDirCommand extends AuthCommand {
 
 	private Path path;
 
-	public Path getPath() {
-		return path;
-	}
-
-	public void setPath(Path path) {
-		this.path = path;
-	}
-
 	@Override
 	public boolean validate() throws ServerException {
-		LOGGER.info("{}: validate command - {}", getRemoteAddress(), Constants.DIR_MAKE_CMD);
+		LOGGER.info("{}: validate command - {}", this.remoteAddress, Constants.DIR_MAKE_CMD);
 
-		setUsername(Utils.getCurrentUsername(getRemoteAddress()));
+		setUsername(Utils.getCurrentUsername(this.remoteAddress));
 
-		if (!Validator.validateNumberOfArgs(getArgs(), 1)) {
-			throw new InvalidNumberOfArgsException(1, getArgs().size());
+		if (!Validator.validateNumberOfArgs(this.args, 1)) {
+			throw new InvalidNumberOfArgsException(1, this.args.size());
 		}
 
 		if (!Authentication.accIsLoging(getUsername())) {
@@ -48,7 +40,7 @@ public class MakeDirCommand extends AuthCommand {
 		}
 
 		// Set temporary file path by user input
-		String tempPath = getArgs().get(0);
+		String tempPath = this.args.get(0);
 
 		// Set canonical file path
 		String canonicalPath;
@@ -68,9 +60,9 @@ public class MakeDirCommand extends AuthCommand {
 
 		// Set up valid path property
 		Path canonicalFolder = Paths.get(canonicalPath);
-		setPath(canonicalFolder);
+		this.path = canonicalFolder;
 
-		if (Files.exists(getPath())) {
+		if (Files.exists(this.path)) {
 			throw new FileAlreadyExistException(tempPath);
 		}
 		return true;
@@ -78,17 +70,17 @@ public class MakeDirCommand extends AuthCommand {
 
 	@Override
 	public String exec() throws ServerException {
-		LOGGER.info("{}: exec command - {}", getRemoteAddress(), Constants.DIR_MAKE_CMD);
+		LOGGER.info("{}: exec command - {}", this.remoteAddress, Constants.DIR_MAKE_CMD);
 
 		try {
-			Files.createDirectories(getPath());
+			Files.createDirectories(this.path);
 		} catch (IOException e) {
 			if (Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
 			throw new ServerException();
 		}
-		return String.format("Created folder: %s", getPath().getFileName());
+		return String.format("Created folder: %s", this.path.getFileName());
 	}
 
 }
