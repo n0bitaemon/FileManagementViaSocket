@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import filemanager.com.server.auth.Authentication;
+import filemanager.com.server.cmd.AuthCommand;
 import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.common.Constants;
 import filemanager.com.server.common.Environments;
@@ -32,13 +33,13 @@ public class FileDeleteCommand extends AuthCommand {
 	public boolean validate() throws ServerException {
 		LOGGER.info("{}: validate command - {}", this.remoteAddress, Constants.FILE_DELETE_CMD);
 
-		setUsername(Utils.getCurrentUsername(this.remoteAddress));
+		this.username = Utils.getCurrentUsername(this.remoteAddress);
 
 		if (!Validator.validateNumberOfArgs(this.args, 1)) {
 			throw new InvalidNumberOfArgsException(1, this.args.size());
 		}
 
-		if (!Authentication.accIsLoging(getUsername())) {
+		if (!Authentication.accIsLoging(this.username)) {
 			throw new NotLoggedInException();
 		}
 
@@ -48,7 +49,7 @@ public class FileDeleteCommand extends AuthCommand {
 		// Set canonical file path
 		String canonicalFilePath;
 		try {
-			canonicalFilePath = Utils.getCanonicalFilePath(tempPath, getUsername());
+			canonicalFilePath = Utils.getCanonicalFilePath(tempPath, this.username);
 		} catch (IOException e) {
 			if (Environments.DEBUG_MODE) {
 				e.printStackTrace();
@@ -57,7 +58,7 @@ public class FileDeleteCommand extends AuthCommand {
 		}
 
 		// Check permission of user
-		if (!Validator.checkPermission(canonicalFilePath, getUsername())) {
+		if (!Validator.checkPermission(canonicalFilePath, this.username)) {
 			throw new NoPermissionException(tempPath);
 		}
 

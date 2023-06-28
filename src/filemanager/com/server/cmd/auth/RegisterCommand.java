@@ -20,8 +20,8 @@ public class RegisterCommand extends Command {
 	@Override
 	public boolean validate() throws ServerException {
 
-		if (!Validator.validateNumberOfArgs(getArgs(), 2)) {
-			throw new InvalidNumberOfArgsException(0, getArgs().size());
+		if (!Validator.validateNumberOfArgs(this.args, 2)) {
+			throw new InvalidNumberOfArgsException(0, this.args.size());
 		}
 
 		return true;
@@ -29,12 +29,12 @@ public class RegisterCommand extends Command {
 
 	@Override
 	public String exec() throws ServerException {
-		if (Authentication.channelIsLoging(getRemoteAddress())) {
-			throw new UserAlreadyLoginException(Authentication.session.get(getRemoteAddress()));
+		if (Authentication.channelIsLoging(this.remoteAddress)) {
+			throw new UserAlreadyLoginException(Authentication.session.get(this.remoteAddress));
 		}
 
-		String username = this.getArgs().get(0);
-		String password = this.getArgs().get(1);
+		String username = this.args.get(0);
+		String password = this.args.get(1);
 		if (Authentication.findAccInDatabase(username)) {
 			throw new UserAlreadyExistException(username);
 		}

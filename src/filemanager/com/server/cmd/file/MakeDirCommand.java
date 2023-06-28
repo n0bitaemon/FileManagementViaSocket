@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import filemanager.com.server.auth.Authentication;
+import filemanager.com.server.cmd.AuthCommand;
 import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.common.Constants;
 import filemanager.com.server.common.Environments;
@@ -29,13 +30,13 @@ public class MakeDirCommand extends AuthCommand {
 	public boolean validate() throws ServerException {
 		LOGGER.info("{}: validate command - {}", this.remoteAddress, Constants.DIR_MAKE_CMD);
 
-		setUsername(Utils.getCurrentUsername(this.remoteAddress));
+		this.username = Utils.getCurrentUsername(this.remoteAddress);
 
 		if (!Validator.validateNumberOfArgs(this.args, 1)) {
 			throw new InvalidNumberOfArgsException(1, this.args.size());
 		}
 
-		if (!Authentication.accIsLoging(getUsername())) {
+		if (!Authentication.accIsLoging(this.username)) {
 			throw new NotLoggedInException();
 		}
 
@@ -45,7 +46,7 @@ public class MakeDirCommand extends AuthCommand {
 		// Set canonical file path
 		String canonicalPath;
 		try {
-			canonicalPath = Utils.getCanonicalFilePath(tempPath, getUsername());
+			canonicalPath = Utils.getCanonicalFilePath(tempPath, this.username);
 		} catch (IOException e) {
 			if (Environments.DEBUG_MODE) {
 				e.printStackTrace();
@@ -54,7 +55,7 @@ public class MakeDirCommand extends AuthCommand {
 		}
 
 		// Check permission of user
-		if (!Validator.checkPermission(canonicalPath, getUsername())) {
+		if (!Validator.checkPermission(canonicalPath, this.username)) {
 			throw new NoPermissionException(tempPath);
 		}
 

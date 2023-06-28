@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import filemanager.com.server.auth.Authentication;
+import filemanager.com.server.cmd.AuthCommand;
 import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.common.Constants;
 import filemanager.com.server.common.Environments;
@@ -31,13 +32,13 @@ public class FileMoveCommand extends AuthCommand {
 	public boolean validate() throws ServerException {
 		LOGGER.info("{}: validate command - {}", this.remoteAddress, Constants.FILE_MOVE_CMD);
 		
-		setUsername(Utils.getCurrentUsername(this.remoteAddress));
+		this.username = Utils.getCurrentUsername(this.remoteAddress);
 		
 		if (!Validator.validateNumberOfArgs(this.args, 2)) {
 			throw new InvalidNumberOfArgsException(2, this.args.size());
 		}
 
-		if (!Authentication.accIsLoging(getUsername())) {
+		if (!Authentication.accIsLoging(this.username)) {
 			throw new NotLoggedInException();
 		}
 
@@ -48,7 +49,7 @@ public class FileMoveCommand extends AuthCommand {
 		// Set canonical old file path
 		String canonicalOldFilePath;
 		try {
-			canonicalOldFilePath = Utils.getCanonicalFilePath(tempOldPath, getUsername());
+			canonicalOldFilePath = Utils.getCanonicalFilePath(tempOldPath, this.username);
 		} catch (IOException e) {
 			if (Environments.DEBUG_MODE) {
 				e.printStackTrace();
@@ -59,7 +60,7 @@ public class FileMoveCommand extends AuthCommand {
 		// Set canonical new file path
 		String canonicalNewFilePath;
 		try {
-			canonicalNewFilePath = Utils.getCanonicalFilePath(tempNewPath, getUsername());
+			canonicalNewFilePath = Utils.getCanonicalFilePath(tempNewPath, this.username);
 		} catch (IOException e) {
 			if (Environments.DEBUG_MODE) {
 				e.printStackTrace();
@@ -68,10 +69,10 @@ public class FileMoveCommand extends AuthCommand {
 		}
 
 		// Check permission of user
-		if (!Validator.checkPermission(canonicalOldFilePath, getUsername())) {
+		if (!Validator.checkPermission(canonicalOldFilePath, this.username)) {
 			throw new NoPermissionException(tempOldPath);
 		}
-		if (!Validator.checkPermission(canonicalNewFilePath, getUsername())) {
+		if (!Validator.checkPermission(canonicalNewFilePath, this.username)) {
 			throw new NoPermissionException(tempNewPath);
 		}
 
@@ -109,8 +110,8 @@ public class FileMoveCommand extends AuthCommand {
 			throw new ServerException();
 		}
 
-		String relativeOldPath = this.oldPath.toString().replace(Constants.STORAGE_DIR + getUsername(), "");
-		String relativeNewPath = this.newPath.toString().replace(Constants.STORAGE_DIR + getUsername(), "");
+		String relativeOldPath = this.oldPath.toString().replace(Constants.STORAGE_DIR + this.username, "");
+		String relativeNewPath = this.newPath.toString().replace(Constants.STORAGE_DIR + this.username, "");
 		return String.format("Moved: %s => %s", relativeOldPath, relativeNewPath);
 	}
 

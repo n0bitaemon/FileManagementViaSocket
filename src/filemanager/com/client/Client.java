@@ -37,9 +37,7 @@ public class Client implements AutoCloseable {
 
 		// Read response
 		buffer.clear();
-		System.out.println("previous");
 		int numBytes = socketChannel.read(buffer);
-		System.out.println("after");
 		return new String(buffer.array(), 0, numBytes, StandardCharsets.UTF_8).trim();
 	}
 
@@ -58,12 +56,23 @@ public class Client implements AutoCloseable {
 			if (cmd.equalsIgnoreCase("exit")) {
 				break;
 			}
+
+			try {
+				res = send(cmd);
+			} catch (NotYetConnectedException e) {
+				res = "The server is disconnected!";
+			} catch (BufferOverflowException e) {
+				res = "Client error: Message to long!";
+			} catch (IOException e) {
+				res = "Unexpected error!";
+			}
+			System.out.println(res);
+			
 			String[] msgArr = cmd.split(" ");
 			if(msgArr[0].equalsIgnoreCase("download")) {
-				String sourcePathStr = msgArr[1];
 	            String destPathStr = msgArr[2];
-	            ByteBuffer buffer = ByteBuffer.wrap(("DOWNLOAD " + sourcePathStr).getBytes());
-	            socketChannel.write(buffer);
+	            
+	            res = send(cmd);
 
 	            FileChannel fileChannel = FileChannel.open(Paths.get("downloaded", destPathStr), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
 	            ByteBuffer fileBuffer = ByteBuffer.allocate(1024);
@@ -77,17 +86,9 @@ public class Client implements AutoCloseable {
 	            fileChannel.close();
 				
 				continue;
+			} else if (msgArr[0].equals("upload")) {
+				
 			}
-			try {
-				res = send(cmd);
-			} catch (NotYetConnectedException e) {
-				res = "The server is disconnected!";
-			} catch (BufferOverflowException e) {
-				res = "Client error: Message to long!";
-			} catch (IOException e) {
-				res = "Unexpected error!";
-			}
-			System.out.println(res);
 		}
 
 		sc.close();

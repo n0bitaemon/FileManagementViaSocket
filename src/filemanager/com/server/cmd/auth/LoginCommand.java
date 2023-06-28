@@ -13,17 +13,17 @@ public class LoginCommand extends Command {
 	public boolean validate() throws ServerException {
 		// Checking for number of arguments
 
-		if (!Validator.validateNumberOfArgs(getArgs(), 2)) {
-			throw new InvalidNumberOfArgsException(2, getArgs().size());
+		if (!Validator.validateNumberOfArgs(this.args, 2)) {
+			throw new InvalidNumberOfArgsException(2, this.args.size());
 		}
 
 		// Checking for credentials
 
-		if (Authentication.channelIsLoging(getRemoteAddress())) {
-			throw new UserAlreadyLoginException(Authentication.session.get(getRemoteAddress()));
+		if (Authentication.channelIsLoging(this.remoteAddress)) {
+			throw new UserAlreadyLoginException(Authentication.session.get(this.remoteAddress));
 		}
 		
-		String username = this.getArgs().get(0);
+		String username = this.args.get(0);
 		if (Authentication.accIsLoging(username)) {
 			Authentication.session.remove(Authentication.accOfChannel(username));
 		}
@@ -32,8 +32,8 @@ public class LoginCommand extends Command {
 	}
 
 	public String exec() throws ServerException {
-		String username = this.getArgs().get(0);
-		String password = this.getArgs().get(1);
+		String username = this.args.get(0);
+		String password = this.args.get(1);
 
 		System.out.println(username + password);
 		if (!Authentication.findAccInDatabase(username)) {
@@ -44,9 +44,9 @@ public class LoginCommand extends Command {
 			throw new InvalidCredentialsException();
 		}
 
-		Authentication.session.put(getRemoteAddress(), username);
+		Authentication.session.put(this.remoteAddress, username);
 
-		return "Logged in as " + this.getArgs().get(0);
+		return "Logged in as " + this.args.get(0);
 	}
 
 }

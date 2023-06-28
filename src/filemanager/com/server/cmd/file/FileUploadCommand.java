@@ -2,12 +2,14 @@ package filemanager.com.server.cmd.file;
 
 import java.nio.file.Path;
 
+import filemanager.com.server.cmd.AuthCommand;
 import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.common.Constants;
 import filemanager.com.server.exception.InvalidNumberOfArgsException;
 
 public class FileUploadCommand extends AuthCommand {
-	private Path uploadedPath;
+	private Path source;
+	private Path dest;
 
 	@Override
 	public boolean validate() throws InvalidNumberOfArgsException {

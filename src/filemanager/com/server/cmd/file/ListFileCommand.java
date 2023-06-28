@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import filemanager.com.server.auth.Authentication;
+import filemanager.com.server.cmd.AuthCommand;
 import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.common.Constants;
 import filemanager.com.server.common.Environments;
@@ -33,14 +34,14 @@ public class ListFileCommand extends AuthCommand {
 	public boolean validate() throws ServerException {
 		LOGGER.info("{}: validate command - {}", this.remoteAddress, Constants.DIR_LIST_FILE_CMD);
 		
-		setUsername(Utils.getCurrentUsername(this.remoteAddress));
+		this.username = Utils.getCurrentUsername(this.remoteAddress);
 
-		if (!Validator.validateNumberOfArgs(this.args, 1) && !Validator.validateNumberOfArgs(this.args, 0)) {
-			int[] validNumberOfArguments = { 0, 1 };
-			throw new InvalidNumberOfArgsException(validNumberOfArguments, this.args.size());
+		int[] validNumberOfArgs = {0, 1};
+		if (!Validator.validateNumberOfArgs(this.args, validNumberOfArgs)) {
+			throw new InvalidNumberOfArgsException(validNumberOfArgs, this.args.size());
 		}
 
-		if (!Authentication.accIsLoging(getUsername())) {
+		if (!Authentication.accIsLoging(this.username)) {
 			throw new NotLoggedInException();
 		}
 
@@ -55,7 +56,7 @@ public class ListFileCommand extends AuthCommand {
 		// Set canonical file path
 		String canonicalFilePath;
 		try {
-			canonicalFilePath = Utils.getCanonicalFilePath(tempPath, getUsername());
+			canonicalFilePath = Utils.getCanonicalFilePath(tempPath, this.username);
 		} catch (IOException e) {
 			if (Environments.DEBUG_MODE) {
 				e.printStackTrace();
@@ -64,7 +65,7 @@ public class ListFileCommand extends AuthCommand {
 		}
 
 		// Check permission of user
-		if (!Validator.checkPermission(canonicalFilePath, getUsername())) {
+		if (!Validator.checkPermission(canonicalFilePath, this.username)) {
 			throw new NoPermissionException(tempPath);
 		}
 

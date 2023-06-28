@@ -11,11 +11,11 @@ public class LogoutCommand extends Command {
 
 	@Override
 	public boolean validate() throws ServerException {
-		if (!Validator.validateNumberOfArgs(getArgs(), 0)) {
-			throw new InvalidNumberOfArgsException(0, getArgs().size());
+		if (!Validator.validateNumberOfArgs(this.args, 0)) {
+			throw new InvalidNumberOfArgsException(0, this.args.size());
 		}
 
-		if (!Authentication.channelIsLoging(getRemoteAddress())) {
+		if (!Authentication.channelIsLoging(this.remoteAddress)) {
 			throw new NotLoggedInException();
 		}
 		return true;
@@ -23,7 +23,7 @@ public class LogoutCommand extends Command {
 
 	@Override
 	public String exec() throws ServerException {
-		Authentication.session.remove(getRemoteAddress());
+		Authentication.session.remove(this.remoteAddress);
 		return "Logged out";
 	}
 
