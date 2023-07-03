@@ -1,34 +1,84 @@
 package filemanager.com.server.cmd.file;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import filemanager.com.server.auth.Authentication;
 import filemanager.com.server.cmd.AuthCommand;
 import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.common.Constants;
+import filemanager.com.server.common.Environments;
+import filemanager.com.server.common.Utils;
+import filemanager.com.server.exception.FileAlreadyExistException;
 import filemanager.com.server.exception.InvalidNumberOfArgsException;
+import filemanager.com.server.exception.InvalidPathException;
+import filemanager.com.server.exception.NoPermissionException;
+import filemanager.com.server.exception.NotLoggedInException;
+import filemanager.com.server.exception.ServerException;
 
 public class FileUploadCommand extends AuthCommand {
-	private Path source;
+	private static final Logger LOGGER = LogManager.getLogger(FileDownloadCommand.class);
+
 	private Path dest;
 
 	@Override
-	public boolean validate() throws InvalidNumberOfArgsException {
-		System.out.println("[SERVER LOG] FILE UPLOAD VALIDATION");
+	public boolean validate() throws ServerException {
+		LOGGER.info("{}: validate command - {}", this.remoteAddress, Constants.FILE_UPLOAD_CMD);
 		
-		if(!Validator.validateNumberOfArgs(this.args, 2)) {
-			throw new InvalidNumberOfArgsException(2, this.args.size());
+		this.username = Utils.getCurrentUsername(this.remoteAddress);
+
+		int[] validNumberOfArgs = {1, 2};
+		if(!Validator.validateNumberOfArgs(this.args, validNumberOfArgs)) {
+			throw new InvalidNumberOfArgsException(validNumberOfArgs, this.args.size());
+		}
+		
+		if (!Authentication.accIsLoging(this.username)) {
+			throw new NotLoggedInException();
+		}
+		
+		// Set temporary file path by user input
+		String tempDest = this.args.get(0);
+		
+		// Set canonical old file path
+		String canonicalDest;
+		try {
+			canonicalDest = Utils.getCanonicalFilePath(tempDest, this.username);
+		} catch (IOException e) {
+			if (Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
+			throw new InvalidPathException(tempDest);
+		}
+
+		// Check permission of user
+		if (!Validator.checkPermission(canonicalDest, this.username)) {
+			throw new NoPermissionException(tempDest);
+		}
+		
+		// Set up valid path property
+		Path canonicalSourceFile = Paths.get(canonicalDest);
+		this.dest = canonicalSourceFile;
+		
+		if (Files.exists(this.dest)) {
+			throw new FileAlreadyExistException(tempDest);
 		}
 		
 		return true;
 	}
 
 	@Override
-	public String exec() {
-		System.out.println("[SERVER LOG] FILE UPLOAD EXECUTION");
+	public String exec() throws ServerException {
+		LOGGER.info("{}: exec command - {}", this.remoteAddress, Constants.FILE_UPLOAD_CMD);
 		
-//		try(FileChannel fileChannel = FileChannel.open(getUploadedPath(), StandardOpenOption.WRITE)){
-//			SocketChannel socketChannel = getSocketChannel();
-//			while(socketChannel.read(null))
+//		try(FileChannel fileChannel = new FileOutputStream(this.dest.toString()).getChannel()) {
+//			while(this.socketChannel.read())
+//		} catch (Exception e) {
+//			
 //		}
 		
 		return Constants.RESPONSE_SUCCESS_MSG;

@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 
 import filemanager.com.server.cmd.Command;
 import filemanager.com.server.common.Environments;
+import filemanager.com.server.exception.InvalidCommandException;
 import filemanager.com.server.exception.ServerException;
 
 public class Server implements AutoCloseable {
@@ -25,7 +26,7 @@ public class Server implements AutoCloseable {
 	private Selector selector;
 	private ByteBuffer buffer;
 
-	public Server(int port) throws IOException {
+	private Server(int port) throws IOException {
 		selector = Selector.open();
 		ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
 		serverSocketChannel.bind(new InetSocketAddress(port));
@@ -35,7 +36,7 @@ public class Server implements AutoCloseable {
 		LOGGER.info("Server started on port {}", port);
 	}
 
-	public void start() throws IOException {
+	private void start() throws IOException {
 		while (true) {
 			selector.select();
 
@@ -52,7 +53,9 @@ public class Server implements AutoCloseable {
 					} else if (key.isReadable()) {
 						read(key);
 					} else if (key.isWritable()) {
-						write(key);
+						String request = (String) key.attachment();
+						Response response = getResponse(request, key);
+						write(key, response);
 					}
 				} catch (BufferOverflowException e) {
 					if (Environments.DEBUG_MODE) {
@@ -78,7 +81,7 @@ public class Server implements AutoCloseable {
 		LOGGER.info("Connected: {}", socketChannel.getRemoteAddress());
 	}
 
-	private void read(SelectionKey key) throws IOException {
+	public void read(SelectionKey key) throws IOException {
 		if (key == null)
 			return;
 
@@ -99,21 +102,25 @@ public class Server implements AutoCloseable {
 		key.interestOps(SelectionKey.OP_WRITE);
 		key.attach(request);
 	}
+	
 
-	private void write(SelectionKey key) throws IOException {
+	private void write(SelectionKey key, Response response) throws IOException {
 		SocketChannel socketChannel = (SocketChannel) key.channel();
 		SocketAddress remoteAddress = socketChannel.getRemoteAddress();
-		String req = (String) key.attachment();
-		String res = getResponse(req, remoteAddress, socketChannel);
-
+		
+		short status = response.getStatus() == true ? (short) 1 : (short) 0;
+		String message = response.getMessage();
+		
+		// Request structure: status(short) data(bytes)
 		buffer.clear();
-		buffer.put(res.getBytes());
+		buffer.putShort(status);
+		buffer.put(message.getBytes());
 		buffer.flip();
 
 		socketChannel.write(buffer);
 
 		key.interestOps(SelectionKey.OP_READ);
-		LOGGER.info("Response to {}: {}", remoteAddress, res);
+		LOGGER.info("Response to {}({}): {}", remoteAddress, status, message);
 	}
 
 	private void disconnect(SelectionKey key) throws IOException {
@@ -123,17 +130,36 @@ public class Server implements AutoCloseable {
 		socketChannel.close();
 	}
 
-	private String getResponse(String req, SocketAddress remoteAddress, SocketChannel socketChannel) {
-		Command cmd = Command.parseCommandFromString(req, remoteAddress, socketChannel);
+	private Response getResponse(String req, SelectionKey key) {
+		SocketChannel socketChannel = (SocketChannel) key.channel();
+		SocketAddress remoteAddress;
+		try {
+			remoteAddress = socketChannel.getRemoteAddress();
+		} catch (IOException e) {
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
+			return new Response(false, "Error handling remote address");
+		}
+		
+		Command cmd;
+		try {
+			cmd = Command.parseCommandFromString(req, remoteAddress, key);
+		} catch (InvalidCommandException e) {
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
+			return new Response(false, "Invalid command");
+		}
 		if (cmd != null) {
 			// Only return validateResponse if there is an error in validation step
 			try {
 				// EXP00-J: Không bỏ qua giá trị trả về của hàm
 				if (!cmd.validate()) {
-					return "Validation error";
+					return new Response(false, "Validation error");
 				}
 			} catch (ServerException e) {
-				return e.getMessage();
+				return new Response(false, e.getMessage());
 			}
 
 			// Always return execResponse
@@ -141,11 +167,11 @@ public class Server implements AutoCloseable {
 			try {
 				execResponse = cmd.exec();
 			} catch (ServerException e) {
-				return e.getMessage();
+				return new Response(false, e.getMessage());
 			}
-			return execResponse;
+			return new Response(true, execResponse);
 		} else {
-			return "Command not found!";
+			return new Response(false, "Command not found");
 		}
 	}
 
@@ -156,7 +182,7 @@ public class Server implements AutoCloseable {
 		try (Server server = new Server(port)) {
 			server.start();
 		} catch (Exception e) {
-			LOGGER.error("Unexpected error while starting server");
+			LOGGER.error("Unexpected error. Server stopped");
 			if (Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
@@ -168,4 +194,6 @@ public class Server implements AutoCloseable {
 		this.selector.close();
 		LOGGER.info("Server is closed");
 	}
+	
+	
 }

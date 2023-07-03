@@ -106,6 +106,7 @@ public class ListFileCommand extends AuthCommand {
 			return filesResponse.toString();
 		}
 
+		filesResponse.append("\n");
 		for (Path entry : files) {
 			filesResponse.append(files.indexOf(entry) == files.size() - 1 ? "└─ " : "├─ ");
 			filesResponse.append(entry.getFileName().toString());

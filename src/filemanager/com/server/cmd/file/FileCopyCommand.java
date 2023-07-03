@@ -14,6 +14,7 @@ import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.common.Constants;
 import filemanager.com.server.common.Environments;
 import filemanager.com.server.common.Utils;
+import filemanager.com.server.exception.DirectoryNotFoundException;
 import filemanager.com.server.exception.FileNotFoundException;
 import filemanager.com.server.exception.InvalidNumberOfArgsException;
 import filemanager.com.server.exception.InvalidPathException;
@@ -23,9 +24,9 @@ import filemanager.com.server.exception.ServerException;
 
 public class FileCopyCommand extends AuthCommand {
 	private static final Logger LOGGER = LogManager.getLogger(FileCopyCommand.class);
-
-	private Path oldPath;
-	private Path newPath;
+	
+	private Path source;
+	private Path dest;
 
 	@Override
 	public boolean validate() throws ServerException {
@@ -42,51 +43,51 @@ public class FileCopyCommand extends AuthCommand {
 		}
 
 		// Set temporary file path by user input
-		String tempOldPath = this.args.get(0);
-		String tempNewPath = this.args.get(1);
+		String tempSource = this.args.get(0);
+		String tempDest = this.args.get(1);
 
 		// Set canonical old file path
-		String canonicalOldFilePath;
+		String canonicalSourceStr;
 		try {
-			canonicalOldFilePath = Utils.getCanonicalFilePath(tempOldPath, this.username);
+			canonicalSourceStr = Utils.getCanonicalFilePath(tempSource, this.username);
 		} catch (IOException e) {
 			if (Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
-			throw new InvalidPathException(tempOldPath);
+			throw new InvalidPathException(tempSource);
 		}
 
 		// Set canonical new file path
-		String canonicalNewFilePath;
+		String canonicalDestStr;
 		try {
-			canonicalNewFilePath = Utils.getCanonicalFilePath(tempNewPath, this.username);
+			canonicalDestStr = Utils.getCanonicalFilePath(tempDest, this.username);
 		} catch (IOException e) {
 			if (Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
-			throw new InvalidPathException(tempNewPath);
+			throw new InvalidPathException(tempDest);
 		}
 
 		// Check permission of user
-		if (!Validator.checkPermission(canonicalOldFilePath, this.username)) {
-			throw new NoPermissionException(tempOldPath);
+		if (!Validator.checkPermission(canonicalSourceStr, this.username)) {
+			throw new NoPermissionException(tempSource);
 		}
-		if (!Validator.checkPermission(canonicalNewFilePath, this.username)) {
-			throw new NoPermissionException(tempNewPath);
+		if (!Validator.checkPermission(canonicalDestStr, this.username)) {
+			throw new NoPermissionException(tempDest);
 		}
 
 		// Set up valid path property
-		Path canonicalOldFile = Paths.get(canonicalOldFilePath);
-		Path canonicalNewFile = Paths.get(canonicalNewFilePath);
-		this.oldPath = canonicalOldFile;
-		this.newPath = canonicalNewFile;
+		Path canonicalSourceFile = Paths.get(canonicalSourceStr);
+		Path canonicalDestFile = Paths.get(canonicalDestStr);
+		this.source = canonicalSourceFile;
+		this.dest = canonicalDestFile;
 
-		if (!Files.exists(this.oldPath)) {
-			throw new FileNotFoundException(tempOldPath);
+		if (!Files.exists(this.source)) {
+			throw new FileNotFoundException(tempSource);
 		}
 
-		if (Files.exists(this.newPath)) {
-			throw new FileNotFoundException(tempNewPath);
+		if (Files.exists(this.dest)) {
+			throw new FileNotFoundException(tempDest);
 		}
 
 		return true;
@@ -98,12 +99,12 @@ public class FileCopyCommand extends AuthCommand {
 		
 		try {
 			// If directory not exist, make dir
-			Path parentFolder = this.newPath.getParent();
+			Path parentFolder = this.dest.getParent();
 			if (!Files.exists(parentFolder)) {
-				Files.createDirectories(parentFolder);
+				throw new DirectoryNotFoundException(parentFolder.toString());
 			}
 
-			Files.copy(this.oldPath, this.newPath);
+			Files.copy(this.source, this.dest);
 		} catch (IOException e) {
 			if (Environments.DEBUG_MODE) {
 				e.printStackTrace();
@@ -111,9 +112,9 @@ public class FileCopyCommand extends AuthCommand {
 			throw new ServerException();
 		}
 
-		String relativeOldPath = this.oldPath.toString().replace(Utils.getUserDir(this.username), "");
-		String relativeNewPath = this.newPath.toString().replace(Utils.getUserDir(this.username), "");
-		return String.format("File copied: %s => %s", relativeOldPath, relativeNewPath);
+		String relativeSourceStr = this.source.toString().replace(Utils.getUserDir(this.username), "");
+		String relativeDestStr = this.dest.toString().replace(Utils.getUserDir(this.username), "");
+		return String.format("File copied: %s => %s", relativeSourceStr, relativeDestStr);
 	}
 
 }
