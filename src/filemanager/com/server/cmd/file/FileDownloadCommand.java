@@ -36,8 +36,9 @@ public class FileDownloadCommand extends AuthCommand {
 		
 		this.username = Utils.getCurrentUsername(this.remoteAddress);
 
-		if(!Validator.validateNumberOfArgs(this.args, 1)) {
-			throw new InvalidNumberOfArgsException(1, this.args.size());
+		int[] invalidNumOfArgs = {1, 2};
+		if(!Validator.validateNumberOfArgs(this.args, invalidNumOfArgs)) {
+			throw new InvalidNumberOfArgsException(invalidNumOfArgs, this.args.size());
 		}
 		
 		if (!Authentication.accIsLoging(this.username)) {
@@ -95,7 +96,7 @@ public class FileDownloadCommand extends AuthCommand {
 			tftpBuffer.clear();
 			do {
 				numBytes = socketChannel.read(tftpBuffer);
-			}while(!(numBytes > 0));
+			} while(!(numBytes > 0));
 			if(!TFTPUtils.checkPacket(socketChannel, tftpBuffer, TFTPUtils.OP_RRQ)) {
 				throw new ServerException();
 			}

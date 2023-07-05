@@ -154,7 +154,6 @@ public class Server implements AutoCloseable {
 		if (cmd != null) {
 			// Only return validateResponse if there is an error in validation step
 			try {
-				// EXP00-J: Không bỏ qua giá trị trả về của hàm
 				if (!cmd.validate()) {
 					return new Response(false, "Validation error");
 				}
