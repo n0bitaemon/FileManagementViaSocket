@@ -48,7 +48,7 @@ public class TFTPUtils {
 	 */
 	public static boolean checkPacket(ByteBuffer buffer, int opcode) {
 		buffer.flip();
-		return buffer.getShort() == opcode ? true : false;
+		return buffer.getShort() == opcode;
 	}
 	
 	/**
@@ -134,20 +134,17 @@ public class TFTPUtils {
 				}while(numBytes <= 0);
 
 				if(!checkPacket(buffer, OP_ACK)) {
-					fis.close();
 					return false;
 				}
 				
 				// Check for the last packet
 				if(length < 512) {
-					fis.close();
 					break;
 				}
 				
 				// increase blockNum by 1
 				blockNum += 1;
 			}
-			fis.close();
 			return true;
 		}catch (IOException e) {
 			if(Environments.DEBUG_MODE) {
@@ -174,14 +171,12 @@ public class TFTPUtils {
 				buffer.flip();
 				opcode = buffer.getShort();
 				if(opcode != TFTPUtils.OP_DAT) {
-					fos.close();
 					return false;
 				}
 				
 				// Check for synchronization
 				short blockNumInPacket = buffer.getShort();
 				if(blockNumInPacket != blockNum) {
-					fos.close();
 					return false;
 				}
 				
@@ -200,7 +195,6 @@ public class TFTPUtils {
 				blockNum++;
 			}
 			
-			fos.close();
 			return true;
 		} catch (IOException e) {
 			if(Environments.DEBUG_MODE) {
