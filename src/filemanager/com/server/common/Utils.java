@@ -47,8 +47,9 @@ public class Utils {
 		return Authentication.session.get(remoteAddress);
 	}
 	
-	public static int search(int arr[], int x) {
-        int l = 0, r = arr.length - 1;
+	public static int search(int[] arr, int x) {
+        int l = 0;
+        int r = arr.length - 1;
         while (l <= r) {
             int m = l + (r - l) / 2;
 

@@ -67,8 +67,6 @@ public class FileUploadCommand extends AuthCommand {
 		Path canonicalSourceFile = Paths.get(canonicalDest);
 		this.dest = canonicalSourceFile;
 		
-		System.out.println("DEST: " + this.dest);
-		
 		if (Files.exists(this.dest)) {
 			throw new FileAlreadyExistException(tempDest);
 		}

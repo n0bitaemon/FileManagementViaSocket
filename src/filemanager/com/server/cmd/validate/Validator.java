@@ -11,7 +11,7 @@ public class Validator {
 	}
 
 	public static boolean validateNumberOfArgs(List<String> args, int[] validNums) {
-		return Utils.search(validNums, args.size()) == -1 ? false : true;
+		return Utils.search(validNums, args.size()) != -1;
 	}
 	
 	public static boolean validateNumberOfArgs(List<String> args, int validNum) {

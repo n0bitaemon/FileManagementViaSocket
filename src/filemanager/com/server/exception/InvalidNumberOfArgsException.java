@@ -19,7 +19,6 @@ public class InvalidNumberOfArgsException extends ServerException {
 			str.append(expected[i] + " or ");
 		}
 		str.append(" arguments but " + given + " was given");
-		System.out.println("Neee: " + expected[0]);
 		return str.toString();
 	}
 }

@@ -4,7 +4,7 @@ public class Response {
 	private boolean status;
 	private String message;
 	
-	public Response() {};
+	public Response() {}
 	
 	public Response(boolean status, String message) {
 		super();

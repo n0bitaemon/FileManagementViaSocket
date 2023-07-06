@@ -9,6 +9,9 @@ import java.nio.channels.SocketChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import filemanager.com.server.common.Environments;
+import filemanager.com.server.exception.ServerException;
+
 public class TFTPUtils {
 	public static final int BUFSIZE = 516;
 	
@@ -43,13 +46,9 @@ public class TFTPUtils {
 	 * @return true, false
 	 * @throws IOException
 	 */
-	public static boolean checkPacket(SocketChannel socketChannel, ByteBuffer buffer, int opcode) throws IOException {
+	public static boolean checkPacket(ByteBuffer buffer, int opcode) {
 		buffer.flip();
-		int receivedOpcode = buffer.getShort();
-		if(receivedOpcode != opcode) {
-			return false;
-		}
-		return true;
+		return buffer.getShort() == opcode ? true : false;
 	}
 	
 	/**
@@ -100,109 +99,116 @@ public class TFTPUtils {
 		buffer.putShort(blockNum);
 		buffer.flip();
 		socketChannel.write(buffer);
-		System.out.println("Done send ACK");
 	}
 	
 	public static void sendRRQPacket(String source, SocketChannel socketChannel, ByteBuffer buffer) throws IOException {
-		System.out.println("------------ SEND RRQ --------------");
-		System.out.println("limit="+buffer.limit()+", position="+buffer.position());
 		buffer.clear();
-		System.out.println("limit="+buffer.limit()+", position="+buffer.position());
 		buffer.putShort(OP_RRQ);
 		buffer.put(source.getBytes());
 		buffer.put((byte) 0);
 		buffer.put("octet".getBytes());
 		buffer.put((byte) 0);
-		System.out.println("limit="+buffer.limit()+", position="+buffer.position());
 		buffer.flip();
-		System.out.println("limit="+buffer.limit()+", position="+buffer.position());
 		socketChannel.write(buffer);
-		System.out.println("Done send RRQ");
 	}
 	
-	public static boolean sendFile(File source, SocketChannel socketChannel, ByteBuffer buffer) throws IOException {
-		FileInputStream fis = new FileInputStream(source);
-		short blockNum = 1;
-		byte[] buf = new byte[TFTPUtils.BUFSIZE - 4];
-		while(true) {
-			int length;
-			length = fis.read(buf);
-			if(length == -1) {
-				length = 0;
-			}
+	public static boolean sendFile(File source, SocketChannel socketChannel, ByteBuffer buffer) throws ServerException {
+		try(FileInputStream fis = new FileInputStream(source)){
+			short blockNum = 1;
+			byte[] buf = new byte[TFTPUtils.BUFSIZE - 4];
+			while(true) {
+				int length;
+				length = fis.read(buf);
+				if(length == -1) {
+					length = 0;
+				}
 
-			// Send DAT #blockNum packet
-			sendDATPacket(socketChannel, buffer, blockNum, buf, length);
-			
-			// Receive ACK #blockNum
-			buffer.clear();
-			int numBytes;
-			do {
-				numBytes = socketChannel.read(buffer);
-			}while(!(numBytes > 0));
+				// Send DAT #blockNum packet
+				sendDATPacket(socketChannel, buffer, blockNum, buf, length);
+				
+				// Receive ACK #blockNum
+				buffer.clear();
+				int numBytes;
+				do {
+					numBytes = socketChannel.read(buffer);
+				}while(numBytes <= 0);
 
-			if(!checkPacket(socketChannel, buffer, OP_ACK)) {
-				fis.close();
-				return false;
+				if(!checkPacket(buffer, OP_ACK)) {
+					fis.close();
+					return false;
+				}
+				
+				// Check for the last packet
+				if(length < 512) {
+					fis.close();
+					break;
+				}
+				
+				// increase blockNum by 1
+				blockNum += 1;
 			}
-			
-			// Check for the last packet
-			if(length < 512) {
-				fis.close();
-				break;
+			fis.close();
+			return true;
+		}catch (IOException e) {
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
 			}
-			
-			// increase blockNum by 1
-			blockNum += 1;
-		}
-		fis.close();
-		return true;
-	}
-	
-	public static boolean receiveFile(Path dest, SocketChannel socketChannel, ByteBuffer buffer) throws IOException {
-		short blockNum = 1;
-		short opcode;
-		FileOutputStream fos = new FileOutputStream(dest.toFile());
-		while(true) {
-			// Receive DAT packet
-			buffer.clear();
-			
-			int numBytes;
-			do {
-				numBytes = socketChannel.read(buffer);
-			}while(!(numBytes > 0));
-			
-			buffer.flip();
-			opcode = buffer.getShort();
-			if(opcode != TFTPUtils.OP_DAT) {
-				fos.close();
-				return false;
-			}
-			
-			// Check for synchronization
-			short blockNumInPacket = buffer.getShort();
-			if(blockNumInPacket != blockNum) {
-				fos.close();
-				return false;
-			}
-			
-			// Write data to buffer
-			byte[] dataInBytes = new byte[buffer.remaining()];
-			buffer.get(dataInBytes);
-			fos.write(dataInBytes);
-			
-			// send ACK block
-			sendACKPacket(socketChannel, buffer, blockNumInPacket);
-			
-			// check for the last block
-			if(dataInBytes.length < 512) {
-				break;
-			}
-			blockNum++;
+			throw new ServerException();
 		}
 		
-		fos.close();
-		return true;
+	}
+	
+	public static boolean receiveFile(Path dest, SocketChannel socketChannel, ByteBuffer buffer) throws ServerException {
+		short blockNum = 1;
+		short opcode;
+		try(FileOutputStream fos = new FileOutputStream(dest.toFile())){
+			while(true) {
+				// Receive DAT packet
+				buffer.clear();
+				
+				int numBytes;
+				do {
+					numBytes = socketChannel.read(buffer);
+				}while(numBytes <= 0);
+				
+				buffer.flip();
+				opcode = buffer.getShort();
+				if(opcode != TFTPUtils.OP_DAT) {
+					fos.close();
+					return false;
+				}
+				
+				// Check for synchronization
+				short blockNumInPacket = buffer.getShort();
+				if(blockNumInPacket != blockNum) {
+					fos.close();
+					return false;
+				}
+				
+				// Write data to buffer
+				byte[] dataInBytes = new byte[buffer.remaining()];
+				buffer.get(dataInBytes);
+				fos.write(dataInBytes);
+				
+				// send ACK block
+				sendACKPacket(socketChannel, buffer, blockNumInPacket);
+				
+				// check for the last block
+				if(dataInBytes.length < 512) {
+					break;
+				}
+				blockNum++;
+			}
+			
+			fos.close();
+			return true;
+		} catch (IOException e) {
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
+			throw new ServerException();
+		}
+		
 	}
 	
 	

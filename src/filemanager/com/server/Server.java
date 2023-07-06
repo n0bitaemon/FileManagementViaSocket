@@ -3,7 +3,6 @@ package filemanager.com.server;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -47,26 +46,14 @@ public class Server implements AutoCloseable {
 				if (!key.isValid()) {
 					continue;
 				}
-				try {
-					if (key.isAcceptable()) {
-						accept(key);
-					} else if (key.isReadable()) {
-						read(key);
-					} else if (key.isWritable()) {
-						String request = (String) key.attachment();
-						Response response = getResponse(request, key);
-						write(key, response);
-					}
-				} catch (BufferOverflowException e) {
-					if (Environments.DEBUG_MODE) {
-						e.printStackTrace();
-					}
-					LOGGER.error("Message too long");
-				} catch (IOException e) {
-					if (Environments.DEBUG_MODE) {
-						e.printStackTrace();
-					}
-					disconnect(key);
+				if (key.isAcceptable()) {
+					accept(key);
+				} else if (key.isReadable()) {
+					read(key);
+				} else if (key.isWritable()) {
+					String request = (String) key.attachment();
+					Response response = getResponse(request, key);
+					write(key, response);
 				}
 			}
 		}
@@ -127,7 +114,7 @@ public class Server implements AutoCloseable {
 		SocketChannel socketChannel = (SocketChannel) key.channel();
 		SocketAddress remoteAddress = socketChannel.getRemoteAddress();
 		
-		short status = response.getStatus() == true ? (short) 1 : (short) 0;
+		short status = response.getStatus() ? (short) 1 : (short) 0;
 		String message = response.getMessage();
 		
 		// Request structure: status(short)|data(bytes)

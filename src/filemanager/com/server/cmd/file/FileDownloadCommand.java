@@ -95,8 +95,8 @@ public class FileDownloadCommand extends AuthCommand {
 			tftpBuffer.clear();
 			do {
 				numBytes = socketChannel.read(tftpBuffer);
-			} while(!(numBytes > 0));
-			if(!TFTPUtils.checkPacket(socketChannel, tftpBuffer, TFTPUtils.OP_RRQ)) {
+			} while(numBytes <= 0);
+			if(!TFTPUtils.checkPacket(tftpBuffer, TFTPUtils.OP_RRQ)) {
 				throw new ServerException();
 			}
 
