@@ -30,16 +30,36 @@ public abstract class Command {
 
 	}
 
+	/**
+	 * Initiate a Command instance
+	 * 
+	 * @param key SelectionKey object for the sender
+	 * @param remoteAddress Remote address of the sender
+	 * @param args List of command arguments
+	 */
 	protected Command(SelectionKey key, SocketAddress remoteAddress, List<String> args) {
 		this.key = key;
 		this.remoteAddress = remoteAddress;
 		this.args = args;
 	}
 
+	/**
+	 * @return a boolean value that indicate the validation is successful or not
+	 * @throws ServerException
+	 */
 	public abstract boolean validate() throws ServerException;
 
 	public abstract String exec() throws ServerException;
 
+	/**
+	 * Converting from user input into a Command object
+	 * 
+	 * @param msg Input message string
+	 * @param remoteAddress remote address of the sender
+	 * @param key SelectionKey object for the sender
+	 * @return Return a Command object in case msg is not empty, null otherwise
+	 * @throws InvalidCommandException The method throws InvalidCommandException if msg is in double quote or single quote context
+	 */
 	public static Command parseCommandFromString(String msg, SocketAddress remoteAddress, SelectionKey key) throws InvalidCommandException {
 		// Analyze msg and detect cmd type
 		String[] msgArr = Utils.translateCommandline(msg);

@@ -36,9 +36,8 @@ public class FileDownloadCommand extends AuthCommand {
 		
 		this.username = Utils.getCurrentUsername(this.remoteAddress);
 
-		int[] invalidNumOfArgs = {1, 2};
-		if(!Validator.validateNumberOfArgs(this.args, invalidNumOfArgs)) {
-			throw new InvalidNumberOfArgsException(invalidNumOfArgs, this.args.size());
+		if(!Validator.validateNumberOfArgs(this.args, 2)) {
+			throw new InvalidNumberOfArgsException(2, this.args.size());
 		}
 		
 		if (!Authentication.accIsLoging(this.username)) {

@@ -111,7 +111,7 @@ public class Server implements AutoCloseable {
 		short status = response.getStatus() == true ? (short) 1 : (short) 0;
 		String message = response.getMessage();
 		
-		// Request structure: status(short) data(bytes)
+		// Request structure: status(short)|data(bytes)
 		buffer.clear();
 		buffer.putShort(status);
 		buffer.put(message.getBytes());

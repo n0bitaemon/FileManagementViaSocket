@@ -32,6 +32,16 @@ public class TFTPUtils {
 	private TFTPUtils() {
 	}
 	
+	/**
+	 * 
+	 * Check the buffer is expected TFTP or not using the given opcode
+	 * 
+	 * @param socketChannel
+	 * @param buffer The buffer that contains TFTP packet
+	 * @param opcode The expected opcode of TFTP packet
+	 * @return true, false
+	 * @throws IOException
+	 */
 	public static boolean checkPacket(SocketChannel socketChannel, ByteBuffer buffer, int opcode) throws IOException {
 		buffer.flip();
 		int receivedOpcode = buffer.getShort();
@@ -41,6 +51,12 @@ public class TFTPUtils {
 		return true;
 	}
 	
+	/**
+	 * @param source
+	 * @param socketChannel
+	 * @param buffer
+	 * @throws IOException
+	 */
 	public static void sendFileSize(Path source, SocketChannel socketChannel, ByteBuffer buffer) throws IOException {
 		long fileSize = Files.size(source);
 		buffer.clear();

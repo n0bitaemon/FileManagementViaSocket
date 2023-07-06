@@ -13,12 +13,13 @@ public class InvalidNumberOfArgsException extends ServerException {
 		StringBuilder str = new StringBuilder("Invalid number of arguments: Expected ");
 		for (int i = 0; i < expected.length; i++) {
 			if (i == expected.length - 1) {
-				str.append(i);
+				str.append(expected[i]);
 				break;
 			}
-			str.append(i + " or ");
+			str.append(expected[i] + " or ");
 		}
 		str.append(" arguments but " + given + " was given");
+		System.out.println("Neee: " + expected[0]);
 		return str.toString();
 	}
 }
