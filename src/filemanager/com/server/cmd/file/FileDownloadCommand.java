@@ -67,7 +67,7 @@ public class FileDownloadCommand extends AuthCommand {
 		Path canonicalSourceFile = Paths.get(canonicalSource);
 		this.source = canonicalSourceFile;
 
-		if(Files.isDirectory(this.source)) {
+		if(!Files.isRegularFile(this.source)) {
 			throw new NotAFileException(tempSource);
 		}
 		

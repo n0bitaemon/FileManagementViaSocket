@@ -20,6 +20,19 @@ import filemanager.com.server.common.Utils;
 import filemanager.com.server.exception.InvalidCommandException;
 import filemanager.com.server.exception.ServerException;
 
+/**
+ * A command sent from user. 
+ * A user will first send a string message and then that stringis converted into a Command object.
+ * <br>
+ * A Command object contains the selection key used to communicate with
+ *  the user, the remote address of the user and a List of arguments.
+ * <br>
+ * An instance of Command object always have two methods: 
+ * validate() method is used to check whether the command is valid, 
+ * and the exec() method will execute the command after validation step.
+ * 
+ * @author Minh Triet
+ */
 public abstract class Command {
 
 	protected SelectionKey key;

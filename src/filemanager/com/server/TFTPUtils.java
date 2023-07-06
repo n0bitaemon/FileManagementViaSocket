@@ -2,6 +2,7 @@ package filemanager.com.server;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
@@ -67,6 +68,23 @@ public class TFTPUtils {
 		socketChannel.write(buffer);
 	}
 	
+	public static void sendSuccessStatus(SocketChannel socketChannel, ByteBuffer buffer) throws IOException {
+		buffer.clear();
+		buffer.putShort((short) 1);
+		buffer.flip();
+		socketChannel.write(buffer);
+	}
+	
+	/**
+	 * Send TFTP DAT packet
+	 * 
+	 * @param socketChannel
+	 * @param buffer
+	 * @param blockNum Block number of file
+	 * @param sendBuf
+	 * @param length The length of data
+	 * @throws IOException
+	 */
 	public static void sendDATPacket(SocketChannel socketChannel, ByteBuffer buffer, short blockNum, byte[] sendBuf, int length) throws IOException {
 		buffer.clear();
 		buffer.putShort(TFTPUtils.OP_DAT);
@@ -74,6 +92,32 @@ public class TFTPUtils {
 		buffer.put(sendBuf, 0, length);
 		buffer.flip();
 		socketChannel.write(buffer);
+	}
+	
+	public static void sendACKPacket(SocketChannel socketChannel, ByteBuffer buffer, short blockNum) throws IOException {
+		buffer.clear();
+		buffer.putShort(TFTPUtils.OP_ACK);
+		buffer.putShort(blockNum);
+		buffer.flip();
+		socketChannel.write(buffer);
+		System.out.println("Done send ACK");
+	}
+	
+	public static void sendRRQPacket(String source, SocketChannel socketChannel, ByteBuffer buffer) throws IOException {
+		System.out.println("------------ SEND RRQ --------------");
+		System.out.println("limit="+buffer.limit()+", position="+buffer.position());
+		buffer.clear();
+		System.out.println("limit="+buffer.limit()+", position="+buffer.position());
+		buffer.putShort(OP_RRQ);
+		buffer.put(source.getBytes());
+		buffer.put((byte) 0);
+		buffer.put("octet".getBytes());
+		buffer.put((byte) 0);
+		System.out.println("limit="+buffer.limit()+", position="+buffer.position());
+		buffer.flip();
+		System.out.println("limit="+buffer.limit()+", position="+buffer.position());
+		socketChannel.write(buffer);
+		System.out.println("Done send RRQ");
 	}
 	
 	public static boolean sendFile(File source, SocketChannel socketChannel, ByteBuffer buffer) throws IOException {
@@ -112,6 +156,52 @@ public class TFTPUtils {
 			blockNum += 1;
 		}
 		fis.close();
+		return true;
+	}
+	
+	public static boolean receiveFile(Path dest, SocketChannel socketChannel, ByteBuffer buffer) throws IOException {
+		short blockNum = 1;
+		short opcode;
+		FileOutputStream fos = new FileOutputStream(dest.toFile());
+		while(true) {
+			// Receive DAT packet
+			buffer.clear();
+			
+			int numBytes;
+			do {
+				numBytes = socketChannel.read(buffer);
+			}while(!(numBytes > 0));
+			
+			buffer.flip();
+			opcode = buffer.getShort();
+			if(opcode != TFTPUtils.OP_DAT) {
+				fos.close();
+				return false;
+			}
+			
+			// Check for synchronization
+			short blockNumInPacket = buffer.getShort();
+			if(blockNumInPacket != blockNum) {
+				fos.close();
+				return false;
+			}
+			
+			// Write data to buffer
+			byte[] dataInBytes = new byte[buffer.remaining()];
+			buffer.get(dataInBytes);
+			fos.write(dataInBytes);
+			
+			// send ACK block
+			sendACKPacket(socketChannel, buffer, blockNumInPacket);
+			
+			// check for the last block
+			if(dataInBytes.length < 512) {
+				break;
+			}
+			blockNum++;
+		}
+		
+		fos.close();
 		return true;
 	}
 	

@@ -1,6 +1,8 @@
 package filemanager.com.server.cmd.file;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -8,6 +10,7 @@ import java.nio.file.Paths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import filemanager.com.server.TFTPUtils;
 import filemanager.com.server.auth.Authentication;
 import filemanager.com.server.cmd.AuthCommand;
 import filemanager.com.server.cmd.validate.Validator;
@@ -42,7 +45,7 @@ public class FileUploadCommand extends AuthCommand {
 		}
 		
 		// Set temporary file path by user input
-		String tempDest = this.args.get(0);
+		String tempDest = this.args.get(1);
 		
 		// Set canonical old file path
 		String canonicalDest;
@@ -64,6 +67,8 @@ public class FileUploadCommand extends AuthCommand {
 		Path canonicalSourceFile = Paths.get(canonicalDest);
 		this.dest = canonicalSourceFile;
 		
+		System.out.println("DEST: " + this.dest);
+		
 		if (Files.exists(this.dest)) {
 			throw new FileAlreadyExistException(tempDest);
 		}
@@ -74,14 +79,29 @@ public class FileUploadCommand extends AuthCommand {
 	@Override
 	public String exec() throws ServerException {
 		LOGGER.info("{}: exec command - {}", this.remoteAddress, Constants.FILE_UPLOAD_CMD);
+
+		SocketChannel socketChannel = (SocketChannel) this.key.channel();
 		
-//		try(FileChannel fileChannel = new FileOutputStream(this.dest.toString()).getChannel()) {
-//			while(this.socketChannel.read())
-//		} catch (Exception e) {
-//			
-//		}
+		ByteBuffer tftpBuffer = ByteBuffer.allocate(TFTPUtils.BUFSIZE);
 		
-		return Constants.RESPONSE_SUCCESS_MSG;
+		try {
+			// Send validation success status
+			TFTPUtils.sendSuccessStatus(socketChannel, tftpBuffer);
+			
+			// Send RRQ packet
+			TFTPUtils.sendRRQPacket(this.dest.toString(), socketChannel, tftpBuffer);
+			
+			// Receive file
+			TFTPUtils.receiveFile(dest, socketChannel, tftpBuffer);
+			
+		} catch (IOException e) {
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
+			throw new ServerException();
+		}
+		
+		return String.format("File %s is uploaded", this.dest.getFileName().toString());
 	}
 
 }

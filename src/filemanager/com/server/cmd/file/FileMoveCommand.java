@@ -99,7 +99,6 @@ public class FileMoveCommand extends AuthCommand {
 			// If directory not exist, make dir
 			if (!Files.exists(this.newPath.getParent())) {
 				Files.createDirectories(this.newPath);
-				System.out.println("Directory not exist, created");
 			}
 
 			Files.move(this.oldPath, this.newPath);

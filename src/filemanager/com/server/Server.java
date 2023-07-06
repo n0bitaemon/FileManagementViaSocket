@@ -72,6 +72,12 @@ public class Server implements AutoCloseable {
 		}
 	}
 
+	/**
+	 * Accept a user connection
+	 * 
+	 * @param key
+	 * @throws IOException
+	 */
 	private void accept(SelectionKey key) throws IOException {
 		ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
 		SocketChannel socketChannel;
@@ -81,6 +87,12 @@ public class Server implements AutoCloseable {
 		LOGGER.info("Connected: {}", socketChannel.getRemoteAddress());
 	}
 
+	/**
+	 * Read user message from SelectionKey object
+	 * 
+	 * @param key
+	 * @throws IOException
+	 */
 	public void read(SelectionKey key) throws IOException {
 		if (key == null)
 			return;
@@ -104,6 +116,13 @@ public class Server implements AutoCloseable {
 	}
 	
 
+	/**
+	 * Write a message and send it to user
+	 * 
+	 * @param key
+	 * @param response
+	 * @throws IOException
+	 */
 	private void write(SelectionKey key, Response response) throws IOException {
 		SocketChannel socketChannel = (SocketChannel) key.channel();
 		SocketAddress remoteAddress = socketChannel.getRemoteAddress();
@@ -130,6 +149,14 @@ public class Server implements AutoCloseable {
 		socketChannel.close();
 	}
 
+	/**
+	 * This method get the user message as input, and then generate a
+	 * response corresponding to that request.
+	 * 
+	 * @param req The message sent from user
+	 * @param key SelectionKey object used to communicate with the user
+	 * @return Response
+	 */
 	private Response getResponse(String req, SelectionKey key) {
 		SocketChannel socketChannel = (SocketChannel) key.channel();
 		SocketAddress remoteAddress;
@@ -155,7 +182,7 @@ public class Server implements AutoCloseable {
 			// Only return validateResponse if there is an error in validation step
 			try {
 				if (!cmd.validate()) {
-					return new Response(false, "Validation error");
+					return new Response(false, "Unexpected error");
 				}
 			} catch (ServerException e) {
 				return new Response(false, e.getMessage());
