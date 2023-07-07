@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import filemanager.com.server.auth.Authentication;
 import filemanager.com.server.cmd.AuthCommand;
 import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.common.Constants;
@@ -31,15 +30,13 @@ public class FileMoveCommand extends AuthCommand {
 	@Override
 	public boolean validate() throws ServerException {
 		LOGGER.info("{}: validate command - {}", this.remoteAddress, Constants.FILE_MOVE_CMD);
-		
-		this.username = Utils.getCurrentUsername(this.remoteAddress);
+
+		if(!isAuthenticated()) {
+			throw new NotLoggedInException();
+		}
 		
 		if (!Validator.validateNumberOfArgs(this.args, 2)) {
 			throw new InvalidNumberOfArgsException(2, this.args.size());
-		}
-
-		if (!Authentication.accIsLoging(this.username)) {
-			throw new NotLoggedInException();
 		}
 
 		// Set temporary file path by user input

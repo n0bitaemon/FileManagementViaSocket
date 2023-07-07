@@ -11,7 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import filemanager.com.server.TFTPUtils;
-import filemanager.com.server.auth.Authentication;
 import filemanager.com.server.cmd.AuthCommand;
 import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.common.Constants;
@@ -33,15 +32,13 @@ public class FileDownloadCommand extends AuthCommand {
 	@Override
 	public boolean validate() throws ServerException {
 		LOGGER.info("{}: validate command - {}", this.remoteAddress, Constants.FILE_DOWNLOAD_CMD);
-		
-		this.username = Utils.getCurrentUsername(this.remoteAddress);
 
-		if(!Validator.validateNumberOfArgs(this.args, 2)) {
-			throw new InvalidNumberOfArgsException(2, this.args.size());
+		if(!isAuthenticated()) {
+			throw new NotLoggedInException();
 		}
 		
-		if (!Authentication.accIsLoging(this.username)) {
-			throw new NotLoggedInException();
+		if(!Validator.validateNumberOfArgs(this.args, 2)) {
+			throw new InvalidNumberOfArgsException(2, this.args.size());
 		}
 		
 		// Set temporary file path by user input
