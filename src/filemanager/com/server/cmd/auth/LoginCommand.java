@@ -1,5 +1,7 @@
 package filemanager.com.server.cmd.auth;
 
+import java.sql.SQLException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,7 +21,6 @@ public class LoginCommand extends Command {
 		LOGGER.info("{}: validate command - {}", this.remoteAddress, Constants.AUTH_LOGIN_CMD);
 
 		// Checking for number of arguments
-
 		if (!Validator.validateNumberOfArgs(this.args, 2)) {
 			throw new InvalidNumberOfArgsException(2, this.args.size());
 		}
@@ -46,12 +47,20 @@ public class LoginCommand extends Command {
 		String username = this.args.get(0);
 		String password = this.args.get(1);
 		
-		if (!Authentication.findAccInDatabase(username)) {
-			throw new InvalidCredentialsException();
+		try {
+			if (!Authentication.isUsernameInDb(username)) {
+				throw new InvalidCredentialsException();
+			}
+		}catch (SQLException e) {
+			throw new ServerException();
 		}
 
-		if (!Authentication.checkPass(username, password)) {
-			throw new InvalidCredentialsException();
+		try {
+			if (!Authentication.isValidPassword(username, password)) {
+				throw new InvalidCredentialsException();
+			}
+		}catch (SQLException e) {
+			throw new ServerException();
 		}
 		
 		Authentication.session.put(this.remoteAddress, username);

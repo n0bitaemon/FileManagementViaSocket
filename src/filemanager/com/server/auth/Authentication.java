@@ -2,9 +2,9 @@ package filemanager.com.server.auth;
 
 import java.net.SocketAddress;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -12,136 +12,98 @@ import java.util.Hashtable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import filemanager.com.server.common.Environments;
+import filemanager.com.server.sql.SQLConnector;
 
 public class Authentication {
+	private Authentication() {}
+	
 	private static final Logger LOGGER = LogManager.getLogger(Authentication.class);
 
 	public static Dictionary<SocketAddress, String> session = new Hashtable<>();
 
-	public static void addAccountToDatabase(String username, String pass) {
-		String url = Environments.JDBC_URL; // information of the database
-		String usernameforsql = Environments.JDBC_USR	;
-		String passforsql = Environments.JDBC_PWD;
-		try {
-			Class.forName(Environments.JDBC_DRIVER); // register the driver class
-
-			Connection con = DriverManager.getConnection(url, usernameforsql, passforsql); // create connection with the
-
+	public static void addAccountToDatabase(String username, String pass) throws SQLException {
+		try(Connection conn = SQLConnector.getConnection()){
 			String query = "insert into account values(?, ?)";
-			PreparedStatement stat = con.prepareStatement(query);
+			PreparedStatement stat = conn.prepareStatement(query);
 			stat.setString(1, username);
 			stat.setString(2, pass);
 			
-			stat.executeUpdate(); // execute the statement
+			stat.executeUpdate();
 			LOGGER.info("Created username {}", username);
-			con.close(); // close the connection
-		} catch (Exception e) {
-			if (Environments.DEBUG_MODE) {
-				e.printStackTrace();
-			}
 		}
 	}
 
-	public static boolean findAccInDatabase(String username) { // find account with given username
-		String url = Environments.JDBC_URL; // information of the database
-		String usernameforsql = Environments.JDBC_USR;
-		String passforsql = Environments.JDBC_PWD;
-		String u = null;
-		Boolean found = false;
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-
-			Connection con = DriverManager.getConnection(url, usernameforsql, passforsql);
-
+	// find account with given username
+	public static boolean isUsernameInDb(String username) throws SQLException {
+		try(Connection conn = SQLConnector.getConnection()){
+			String dbUsername = null;
+			boolean isUsernameInDb = false;
+			
 			String query = "select * from account where username =?";
-			PreparedStatement stat = con.prepareStatement(query);
+			PreparedStatement stat = conn.prepareStatement(query);
 			stat.setString(1,  username);
 
 			ResultSet res = stat.executeQuery(); // get result from executing the statement
 
 			while (res.next()) {
-				u = res.getString("username");
+				dbUsername = res.getString("username");
 			}
-			con.close();
-		} catch (Exception e) {
-			if (Environments.DEBUG_MODE) {
-				e.printStackTrace();
+			
+			if (dbUsername != null) {
+				isUsernameInDb = true;
 			}
-		}
 
-		if (u != null) {
-			found = true;
+			return isUsernameInDb;
 		}
-
-		return found;
 	}
 
-	public static boolean checkPass(String username, String pass) {
-		String url = Environments.JDBC_URL; // information of the database
-		String usernameforsql = Environments.JDBC_USR;
-		String passforsql = Environments.JDBC_PWD;
-		String p = null;
-		Boolean check = false;
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-
-			Connection con = DriverManager.getConnection(url, usernameforsql, passforsql);
+	public static boolean isValidPassword(String username, String pass) throws SQLException {
+		try(Connection conn = SQLConnector.getConnection()){
+			String dbPass = null;
+			boolean isValidPass = false;
 			
 			String query = "select * from account where username =?";
-			PreparedStatement stat = con.prepareStatement(query);
+			PreparedStatement stat = conn.prepareStatement(query);
 			stat.setString(1, username);
 			
 			ResultSet res = stat.executeQuery(); // get result from executing the statement
 
 			while (res.next()) {
-				p = res.getString("password");
+				dbPass = res.getString("password");
 			}
-			con.close();
-		} catch (Exception e) {
-			if (Environments.DEBUG_MODE) {
-				e.printStackTrace();
+			
+			if (pass.equals(dbPass)) {
+				isValidPass = true;
 			}
+			return isValidPass;
 		}
-		if (pass.equals(p)) {
-			check = true;
-		}
-		return check;
 	}
 
 	public static boolean accIsLoging(String username) {
-		/*
-		 * Enumeration<Object> keys = Authentication.loging.keys();
-		 * 
-		 * while (keys.hasMoreElements()) { Object k = keys.nextElement();
-		 * System.out.println("key: " + k + ", value: " + Authentication.loging.get(k));
-		 * }
-		 */
+		if(username == null) {
+			return false;
+		}
 		
-		
-		Boolean res = false;
-		Enumeration<String> name = session.elements();
+		boolean res = false;
+		Enumeration<String> sessionUsers = session.elements();
 
-		while (name.hasMoreElements()) {
-			Object n = name.nextElement();
-			if (n.equals(username)) {
+		while (sessionUsers.hasMoreElements()) {
+			String user = sessionUsers.nextElement();
+			if (user.equals(username)) {
 				res = true;
 			}
 		}
-
 		return res;
-
 	}
 
-	// Check for status of an account
-	public static Object accOfChannel(String username) {
-		Object channel = null;
-		Enumeration<SocketAddress> keys = session.keys();
+	public static SocketAddress accOfChannel(String username) {
+		SocketAddress channel = null;
+		Enumeration<SocketAddress> sessionRemoteAddrs = session.keys();
 
-		while (keys.hasMoreElements()) {
-			Object k = keys.nextElement();
-			if (session.get(k).equals(username)) {
-				channel = k;
+		while (sessionRemoteAddrs.hasMoreElements()) {
+			SocketAddress remoteAddr = sessionRemoteAddrs.nextElement();
+			if (session.get(remoteAddr).equals(username)) {
+				channel = remoteAddr;
 			}
 		}
 		return channel;

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,8 +42,12 @@ public class RegisterCommand extends Command {
 		String username = this.args.get(0);
 		String password = this.args.get(1);
 		
-		if (Authentication.findAccInDatabase(username)) {
-			throw new UserAlreadyExistException(username);
+		try {
+			if (Authentication.isUsernameInDb(username)) {
+				throw new UserAlreadyExistException(username);
+			}
+		}catch (SQLException e) {
+			throw new ServerException();
 		}
 		
 		if (!username.matches("[a-zA-Z0-9]+")) {
@@ -63,7 +68,14 @@ public class RegisterCommand extends Command {
 		String username = this.args.get(0);
 		String password = this.args.get(1);
 		
-		Authentication.addAccountToDatabase(username, password);
+		try {
+			Authentication.addAccountToDatabase(username, password);
+		} catch (SQLException e) {
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
+			throw new ServerException();
+		}
 		
 		Path path = Paths.get(Constants.STORAGE_DIR + username);
 		try {

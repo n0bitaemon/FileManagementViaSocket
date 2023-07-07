@@ -6,20 +6,16 @@ import java.sql.DriverManager;
 import filemanager.com.server.common.Environments;
 
 public class SQLConnector {
-	private static String DB_URL = Environments.JDBC_URL;
-	private static String USER_NAME = Environments.JDBC_USR;
-	private static String PASSWORD = Environments.JDBC_PWD;
+	private SQLConnector() {}
 
 	public static Connection getConnection() {
-		Connection conn = null;
 		try {
 			Class.forName("com.mysql.cj.Driver");
-			conn = DriverManager.getConnection(SQLConnector.DB_URL, SQLConnector.USER_NAME, SQLConnector.PASSWORD);
-			System.out.println("connect successfully!");
+			return DriverManager.getConnection(Environments.JDBC_URL, Environments.JDBC_USR, Environments.JDBC_PWD);
 		} catch (Exception ex) {
 			System.out.println("connect failure!");
 			ex.printStackTrace();
 		}
-		return conn;
+		return null;
 	}
 }
