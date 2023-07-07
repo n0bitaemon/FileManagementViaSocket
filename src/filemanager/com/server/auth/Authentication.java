@@ -3,6 +3,7 @@ package filemanager.com.server.auth;
 import java.net.SocketAddress;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.MessageFormat;
@@ -23,15 +24,16 @@ public class Authentication {
 			Class.forName(Environments.JDBC_DRIVER); // register the driver class
 
 			Connection con = DriverManager.getConnection(url, usernameforsql, passforsql); // create connection with the
-			Statement stat1 = con.createStatement(); // create sql statement
 
 			if (findAccInDatabase(username)) {
 				System.out.println("This username is already exist, please choose another one");
 			} else {
-				String query = "insert into account values(\"{0}\", \"{1}\")";
-				String statement = MessageFormat.format(query, username, pass); // content of the sql
-																				// statement
-				stat1.executeUpdate(statement); // execute the statement
+				String query = "insert into account values(?, ?)";
+				PreparedStatement stat = con.prepareStatement(query);
+				stat.setString(1, username);
+				stat.setString(2, pass);
+				
+				stat.executeUpdate(); // execute the statement
 				System.out.println("Create new account success");
 			}
 			con.close(); // close the connection
@@ -42,7 +44,7 @@ public class Authentication {
 		}
 	}
 
-	public static boolean findAccInDatabase(String user) { // find account with given username
+	public static boolean findAccInDatabase(String username) { // find account with given username
 		String url = Environments.JDBC_URL; // information of the database
 		String usernameforsql = Environments.JDBC_USR;
 		String passforsql = Environments.JDBC_PWD;
@@ -52,16 +54,15 @@ public class Authentication {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 
 			Connection con = DriverManager.getConnection(url, usernameforsql, passforsql);
-			Statement stat = con.createStatement();
 
-			String query = "select * from account where username = \"{0}\"";
-			String statement = MessageFormat.format(query, user);
+			String query = "select * from account where username =?";
+			PreparedStatement stat = con.prepareStatement(query);
+			stat.setString(1,  username);
 
-			ResultSet res = stat.executeQuery(statement); // get result from executing the statement
+			ResultSet res = stat.executeQuery(); // get result from executing the statement
 
 			while (res.next()) {
 				u = res.getString("username");
-				// System.out.println("found acc:" + u);
 			}
 			con.close();
 		} catch (Exception e) {
@@ -87,12 +88,12 @@ public class Authentication {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 
 			Connection con = DriverManager.getConnection(url, usernameforsql, passforsql);
-			Statement stat = con.createStatement();
-
-			String query = "select * from account where username = \"{0}\"";
-			String statement = MessageFormat.format(query, username);
-
-			ResultSet res = stat.executeQuery(statement); // get result from executing the statement
+			
+			String query = "select * from account where username =?";
+			PreparedStatement stat = con.prepareStatement(query);
+			stat.setString(1, username);
+			
+			ResultSet res = stat.executeQuery(); // get result from executing the statement
 
 			while (res.next()) {
 				p = res.getString("password");
@@ -145,10 +146,6 @@ public class Authentication {
 		return channel;
 	}
 
-	public static void main(String[] args) {
-		addAccountToDatabase("trung", "hello world");
-	}
-
 	public static boolean channelIsLoging(Object channel) {
 		boolean res = false;
 
@@ -159,4 +156,9 @@ public class Authentication {
 		return res;
 	}
 
+	public static void main(String[] args) {
+		//System.out.println(findAccInDatabase("jh"));
+		//System.out.println(checkPass("aaa", "bbhb"));
+		addAccountToDatabase("ksjfvbi/$%&1568", "sjgv8r");
+	}
 }

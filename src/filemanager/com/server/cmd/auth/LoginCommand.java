@@ -7,8 +7,10 @@ import filemanager.com.server.exception.InvalidCredentialsException;
 import filemanager.com.server.exception.InvalidNumberOfArgsException;
 import filemanager.com.server.exception.ServerException;
 import filemanager.com.server.exception.UserAlreadyLoginException;
+import filemanager.com.server.exception.UsernameStandard;
 
 public class LoginCommand extends Command {
+	
 
 	public boolean validate() throws ServerException {
 		// Checking for number of arguments
@@ -33,8 +35,7 @@ public class LoginCommand extends Command {
 	public String exec() throws ServerException {
 		String username = this.getArgs().get(0);
 		String password = this.getArgs().get(1);
-
-		System.out.println(username + password);
+		
 		if (!Authentication.findAccInDatabase(username)) {
 			throw new InvalidCredentialsException();
 		}
@@ -42,7 +43,11 @@ public class LoginCommand extends Command {
 		if (!Authentication.checkPass(username, password)) {
 			throw new InvalidCredentialsException();
 		}
-
+		
+		if (!username.matches("[a-zA-Z0-9]+")) { // no need since user can't create account with this kind of username 
+			throw new InvalidCredentialsException();
+		}
+		
 		Authentication.session.put(getRemoteAddress(), username);
 
 		return "Logged in as " + this.getArgs().get(0);
