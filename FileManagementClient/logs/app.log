@@ -1,0 +1,282 @@
+[INFO ] 2023-07-01 17:18:30.465 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 17:18:41.977 [main] Client:150 - Sent download command
+[INFO ] 2023-07-01 17:18:41.981 [main] Client:169 - Received file size = 2076
+[INFO ] 2023-07-01 17:18:41.982 [main] Client:180 - Sent RRQ packet
+[INFO ] 2023-07-01 17:18:41.982 [main] Client:187 - TFTP packet count: 1
+[INFO ] 2023-07-01 17:18:41.983 [main] Client:207 - Received DAT #1
+[INFO ] 2023-07-01 17:18:41.983 [main] Client:215 - Sent ACK #1
+[INFO ] 2023-07-01 17:18:41.984 [main] Client:187 - TFTP packet count: 1
+[ERROR] 2023-07-01 17:18:41.984 [main] Client:195 - Invalid opcode, expected 4 but 0 is given
+[INFO ] 2023-07-01 17:19:59.844 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 17:20:11.044 [main] Client:150 - Sent download command
+[INFO ] 2023-07-01 17:20:17.786 [main] Client:150 - Sent download command
+[INFO ] 2023-07-01 17:20:17.788 [main] Client:169 - Received file size = 2076
+[INFO ] 2023-07-01 17:20:17.790 [main] Client:180 - Sent RRQ packet
+[INFO ] 2023-07-01 17:20:17.790 [main] Client:187 - TFTP packet count: 1
+[INFO ] 2023-07-01 17:20:17.791 [main] Client:207 - Received DAT #1
+[INFO ] 2023-07-01 17:20:17.791 [main] Client:215 - Sent ACK #1
+[INFO ] 2023-07-01 17:20:17.792 [main] Client:187 - TFTP packet count: 2
+[ERROR] 2023-07-01 17:20:17.792 [main] Client:195 - Invalid opcode, expected 4 but 0 is given
+[INFO ] 2023-07-01 17:28:28.429 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 17:28:41.029 [main] Client:150 - Sent download command
+[INFO ] 2023-07-01 17:28:41.035 [main] Client:169 - Received file size = 2076
+[INFO ] 2023-07-01 17:28:41.037 [main] Client:180 - Sent RRQ packet
+[INFO ] 2023-07-01 17:28:41.038 [main] Client:187 - TFTP packet count: 1
+[ERROR] 2023-07-01 17:28:41.069 [main] Client:267 - Cannot connect to server
+[INFO ] 2023-07-01 17:34:45.844 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 17:34:58.397 [main] Client:150 - Sent download command
+[INFO ] 2023-07-01 17:35:33.596 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 17:35:44.924 [main] Client:150 - Sent download command
+[INFO ] 2023-07-01 17:50:04.604 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 17:50:15.695 [main] Client:150 - Sent download command
+[INFO ] 2023-07-01 17:55:02.943 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 17:55:14.475 [main] Client:150 - Sent download command
+[INFO ] 2023-07-01 17:55:43.194 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 17:55:57.228 [main] Client:150 - Sent download command
+[INFO ] 2023-07-01 17:56:36.316 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 17:56:45.711 [main] Client:150 - Sent download command
+[INFO ] 2023-07-01 17:57:49.922 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 17:58:01.878 [main] Client:150 - Sent download command
+[ERROR] 2023-07-01 17:58:01.880 [main] Client:274 - Cannot connect to server
+[INFO ] 2023-07-01 17:59:17.094 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 17:59:26.430 [main] Client:150 - Sent download command
+[INFO ] 2023-07-01 17:59:26.432 [main] Client:173 - Received file size = 2076
+[INFO ] 2023-07-01 17:59:26.433 [main] Client:185 - Sent RRQ packet
+[INFO ] 2023-07-01 17:59:26.433 [main] Client:192 - TFTP packet count: 1
+[INFO ] 2023-07-01 17:59:26.434 [main] Client:212 - Received DAT #1
+[INFO ] 2023-07-01 17:59:26.434 [main] Client:221 - Sent ACK #1
+[INFO ] 2023-07-01 17:59:26.435 [main] Client:192 - TFTP packet count: 2
+[ERROR] 2023-07-01 17:59:26.435 [main] Client:200 - Invalid opcode, expected 4 but 0 is given
+[ERROR] 2023-07-01 18:02:48.632 [main] Client:274 - Cannot connect to server
+[INFO ] 2023-07-01 18:02:55.728 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 18:03:06.923 [main] Client:150 - Sent download command
+[INFO ] 2023-07-01 18:07:19.951 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 18:07:31.056 [main] Client:151 - Sent download command
+[INFO ] 2023-07-01 18:08:37.933 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 18:08:55.348 [main] Client:151 - Sent download command
+[INFO ] 2023-07-01 18:14:21.471 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 18:14:30.893 [main] Client:151 - Sent download command
+[INFO ] 2023-07-01 18:15:39.202 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 18:15:48.238 [main] Client:151 - Sent download command
+[INFO ] 2023-07-01 18:15:48.242 [main] Client:174 - Received file size = 2076
+[INFO ] 2023-07-01 18:15:48.242 [main] Client:190 - Sent RRQ packet
+[INFO ] 2023-07-01 18:15:48.243 [main] Client:198 - TFTP packet count: 1
+[INFO ] 2023-07-01 18:15:48.243 [main] Client:218 - Received DAT #1
+[INFO ] 2023-07-01 18:15:48.244 [main] Client:227 - Sent ACK #1
+[INFO ] 2023-07-01 18:15:48.244 [main] Client:198 - TFTP packet count: 2
+[ERROR] 2023-07-01 18:15:48.244 [main] Client:206 - Invalid opcode, expected 4 but 0 is given
+[ERROR] 2023-07-01 18:18:09.514 [main] Client:280 - Cannot connect to server
+[INFO ] 2023-07-01 18:18:15.921 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 18:18:25.578 [main] Client:151 - Sent download command
+[INFO ] 2023-07-01 18:18:25.583 [main] Client:174 - Received file size = 2076
+[INFO ] 2023-07-01 18:18:25.584 [main] Client:192 - Sent RRQ packet
+[INFO ] 2023-07-01 18:18:25.584 [main] Client:200 - TFTP packet count: 1
+[ERROR] 2023-07-01 18:18:25.601 [main] Client:282 - Cannot connect to server
+[INFO ] 2023-07-01 18:22:44.284 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 18:22:55.925 [main] Client:151 - Sent download command
+[INFO ] 2023-07-01 18:22:55.931 [main] Client:174 - Received file size = 2076
+[INFO ] 2023-07-01 18:22:55.931 [main] Client:192 - Sent RRQ packet
+[INFO ] 2023-07-01 18:22:55.932 [main] Client:200 - TFTP packet count: 1
+[ERROR] 2023-07-01 18:22:55.943 [main] Client:282 - Cannot connect to server
+[INFO ] 2023-07-01 18:27:59.677 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 18:28:12.009 [main] Client:151 - Sent download command
+[INFO ] 2023-07-01 18:28:12.014 [main] Client:174 - Received file size = 2076
+[INFO ] 2023-07-01 18:28:12.015 [main] Client:192 - Sent RRQ packet
+[INFO ] 2023-07-01 18:28:12.015 [main] Client:200 - TFTP packet count: 1
+[INFO ] 2023-07-01 18:28:12.017 [main] Client:220 - Received DAT #1
+[INFO ] 2023-07-01 18:28:12.017 [main] Client:229 - Sent ACK #1
+[INFO ] 2023-07-01 18:28:12.018 [main] Client:200 - TFTP packet count: 2
+[ERROR] 2023-07-01 18:28:12.018 [main] Client:208 - Invalid opcode, expected 4 but 0 is given
+[INFO ] 2023-07-01 18:35:44.238 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 18:35:54.249 [main] Client:151 - Sent download command
+[INFO ] 2023-07-01 18:35:54.254 [main] Client:174 - Received file size = 2076
+[INFO ] 2023-07-01 18:35:54.255 [main] Client:192 - Sent RRQ packet
+[INFO ] 2023-07-01 18:35:54.256 [main] Client:200 - TFTP packet count: 1
+[INFO ] 2023-07-01 18:35:54.257 [main] Client:233 - Received DAT #1
+[INFO ] 2023-07-01 18:35:54.258 [main] Client:247 - Sent ACK #1
+[INFO ] 2023-07-01 18:35:54.258 [main] Client:200 - TFTP packet count: 2
+[ERROR] 2023-07-01 18:35:54.259 [main] Client:219 - Invalid opcode, expected 4 but 0 is given
+[ERROR] 2023-07-01 18:36:45.464 [main] Client:300 - Cannot connect to server
+[INFO ] 2023-07-01 18:36:55.210 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 18:37:04.029 [main] Client:151 - Sent download command
+[INFO ] 2023-07-01 18:37:04.033 [main] Client:174 - Received file size = 2076
+[INFO ] 2023-07-01 18:37:04.034 [main] Client:192 - Sent RRQ packet
+[INFO ] 2023-07-01 18:37:04.034 [main] Client:200 - TFTP packet count: 1
+[INFO ] 2023-07-01 18:37:04.036 [main] Client:233 - Received DAT #1
+[INFO ] 2023-07-01 18:37:04.038 [main] Client:247 - Sent ACK #1
+[INFO ] 2023-07-01 18:37:04.039 [main] Client:200 - TFTP packet count: 2
+[INFO ] 2023-07-01 18:37:04.040 [main] Client:225 - Unsynchrnouse block number: client #2, server #1
+[ERROR] 2023-07-01 18:37:38.187 [main] Client:300 - Cannot connect to server
+[INFO ] 2023-07-01 18:37:47.133 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 18:37:59.550 [main] Client:151 - Sent download command
+[INFO ] 2023-07-01 18:37:59.556 [main] Client:174 - Received file size = 2076
+[INFO ] 2023-07-01 18:37:59.556 [main] Client:192 - Sent RRQ packet
+[INFO ] 2023-07-01 18:37:59.557 [main] Client:200 - TFTP packet count: 1
+[INFO ] 2023-07-01 18:37:59.559 [main] Client:233 - Received DAT #1
+[INFO ] 2023-07-01 18:37:59.559 [main] Client:247 - Sent ACK #1
+[INFO ] 2023-07-01 18:37:59.560 [main] Client:200 - TFTP packet count: 2
+[INFO ] 2023-07-01 18:37:59.561 [main] Client:233 - Received DAT #2
+[INFO ] 2023-07-01 18:37:59.562 [main] Client:247 - Sent ACK #2
+[INFO ] 2023-07-01 18:37:59.562 [main] Client:200 - TFTP packet count: 3
+[INFO ] 2023-07-01 18:37:59.563 [main] Client:233 - Received DAT #3
+[INFO ] 2023-07-01 18:37:59.564 [main] Client:247 - Sent ACK #3
+[INFO ] 2023-07-01 18:37:59.564 [main] Client:200 - TFTP packet count: 4
+[INFO ] 2023-07-01 18:37:59.566 [main] Client:233 - Received DAT #4
+[INFO ] 2023-07-01 18:37:59.567 [main] Client:247 - Sent ACK #4
+[INFO ] 2023-07-01 18:37:59.567 [main] Client:200 - TFTP packet count: 5
+[INFO ] 2023-07-01 18:37:59.569 [main] Client:233 - Received DAT #5
+[INFO ] 2023-07-01 18:37:59.569 [main] Client:247 - Sent ACK #5
+[INFO ] 2023-07-01 18:37:59.570 [main] Client:253 - Received last block. Break!
+[INFO ] 2023-07-01 19:20:16.121 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 19:20:29.572 [main] Client:151 - Sent download command
+[INFO ] 2023-07-01 19:20:29.581 [main] Client:174 - Received file size = 2076
+[INFO ] 2023-07-01 19:20:29.583 [main] Client:192 - Sent RRQ packet
+[INFO ] 2023-07-01 19:20:29.584 [main] Client:202 - TFTP packet count: 1
+[INFO ] 2023-07-01 19:20:29.586 [main] Client:237 - Received DAT #1
+[INFO ] 2023-07-01 19:20:29.587 [main] Client:250 - Sent ACK #1
+[INFO ] 2023-07-01 19:20:29.587 [main] Client:202 - TFTP packet count: 2
+[INFO ] 2023-07-01 19:20:29.590 [main] Client:237 - Received DAT #2
+[INFO ] 2023-07-01 19:20:29.591 [main] Client:250 - Sent ACK #2
+[INFO ] 2023-07-01 19:20:29.592 [main] Client:202 - TFTP packet count: 3
+[INFO ] 2023-07-01 19:20:29.593 [main] Client:237 - Received DAT #3
+[INFO ] 2023-07-01 19:20:29.594 [main] Client:250 - Sent ACK #3
+[INFO ] 2023-07-01 19:20:29.594 [main] Client:202 - TFTP packet count: 4
+[INFO ] 2023-07-01 19:20:29.596 [main] Client:237 - Received DAT #4
+[INFO ] 2023-07-01 19:20:29.596 [main] Client:250 - Sent ACK #4
+[INFO ] 2023-07-01 19:20:29.596 [main] Client:202 - TFTP packet count: 5
+[INFO ] 2023-07-01 19:20:29.600 [main] Client:237 - Received DAT #5
+[INFO ] 2023-07-01 19:20:29.601 [main] Client:250 - Sent ACK #5
+[INFO ] 2023-07-01 19:20:29.601 [main] Client:255 - Received last block. Break!
+[INFO ] 2023-07-01 20:03:58.701 [main] Client:29 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 20:04:10.944 [main] Client:149 - Sent download command
+[INFO ] 2023-07-01 20:04:10.950 [main] Client:172 - Received file size = 2076
+[INFO ] 2023-07-01 20:04:10.952 [main] Client:190 - Sent RRQ packet
+[INFO ] 2023-07-01 20:04:10.953 [main] Client:200 - TFTP packet count: 1
+[INFO ] 2023-07-01 20:04:10.954 [main] Client:235 - Received DAT #1
+[INFO ] 2023-07-01 20:04:10.955 [main] Client:248 - Sent ACK #1
+[INFO ] 2023-07-01 20:04:10.956 [main] Client:200 - TFTP packet count: 2
+[INFO ] 2023-07-01 20:04:10.957 [main] Client:235 - Received DAT #2
+[INFO ] 2023-07-01 20:04:10.958 [main] Client:248 - Sent ACK #2
+[INFO ] 2023-07-01 20:04:10.958 [main] Client:200 - TFTP packet count: 3
+[INFO ] 2023-07-01 20:04:10.960 [main] Client:235 - Received DAT #3
+[INFO ] 2023-07-01 20:04:10.961 [main] Client:248 - Sent ACK #3
+[INFO ] 2023-07-01 20:04:10.962 [main] Client:200 - TFTP packet count: 4
+[INFO ] 2023-07-01 20:04:10.963 [main] Client:235 - Received DAT #4
+[INFO ] 2023-07-01 20:04:10.963 [main] Client:248 - Sent ACK #4
+[INFO ] 2023-07-01 20:04:10.964 [main] Client:200 - TFTP packet count: 5
+[INFO ] 2023-07-01 20:04:10.964 [main] Client:235 - Received DAT #5
+[INFO ] 2023-07-01 20:04:10.965 [main] Client:248 - Sent ACK #5
+[INFO ] 2023-07-01 20:04:10.965 [main] Client:253 - Received last block. Break!
+[INFO ] 2023-07-01 20:23:43.135 [main] Client:26 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 20:23:54.684 [main] Client:88 - Sent download command
+[INFO ] 2023-07-01 20:23:54.690 [main] Client:113 - Received file size = 2076
+[INFO ] 2023-07-01 21:42:21.565 [main] Client:26 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 21:42:54.310 [main] Client:88 - Sent download command
+[INFO ] 2023-07-01 21:42:54.317 [main] Client:113 - Received file size = 2634254336
+[ERROR] 2023-07-01 21:46:39.315 [main] Client:157 - Cannot connect to server
+[ERROR] 2023-07-01 21:46:51.445 [main] Client:157 - Cannot connect to server
+[INFO ] 2023-07-01 21:53:41.185 [main] Client:26 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 21:54:21.467 [main] Client:26 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 21:54:42.387 [main] Client:88 - Sent download command
+[INFO ] 2023-07-01 22:23:48.781 [main] Client:30 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 22:27:14.943 [main] Client:30 - Connected to server at localhost: 3000
+[ERROR] 2023-07-01 22:27:42.068 [main] Client:186 - Cannot connect to server
+[INFO ] 2023-07-01 22:27:51.694 [main] Client:30 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 22:29:05.043 [main] Client:30 - Connected to server at localhost: 3000
+[INFO ] 2023-07-01 22:32:07.544 [main] Client:30 - Connected to server at localhost: 3000
+[INFO ] 2023-07-04 05:37:34.674 [main] Client:30 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 22:03:13.843 [main] Client:30 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 22:04:17.768 [main] Client:31 - Connected to server at localhost: 3000
+[ERROR] 2023-07-05 22:04:24.290 [main] Client:186 - Cannot connect to server
+[INFO ] 2023-07-05 22:05:16.904 [main] Client:31 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 22:09:02.050 [main] Client:31 - Connected to server at localhost: 3000
+[ERROR] 2023-07-05 22:11:18.444 [main] Client:189 - Cannot connect to server
+[ERROR] 2023-07-05 22:22:20.510 [main] Client:193 - Cannot connect to server
+[INFO ] 2023-07-05 22:22:28.837 [main] Client:36 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 22:25:14.570 [main] Client:36 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 22:29:28.967 [main] Client:37 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 22:32:23.078 [main] Client:37 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 22:40:30.808 [main] Client:37 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 22:43:45.290 [main] Client:37 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 22:45:42.538 [main] Client:38 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 22:49:31.092 [main] Client:38 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 23:04:07.276 [main] Client:39 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 23:06:29.602 [main] Client:39 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 23:07:05.357 [main] Client:39 - Connected to server at localhost: 3000
+[ERROR] 2023-07-05 23:07:30.680 [main] Client:193 - Cannot connect to server
+[INFO ] 2023-07-05 23:07:35.474 [main] Client:39 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 23:29:58.412 [main] Client:33 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 23:30:16.330 [main] Client:65 - Disconnected to server
+[INFO ] 2023-07-05 22:09:17.871 [main] Client:33 - Connected to server at localhost: 3000
+[ERROR] 2023-07-05 22:11:08.478 [main] Client:187 - Cannot connect to server
+[INFO ] 2023-07-05 22:11:12.590 [main] Client:33 - Connected to server at localhost: 3000
+[ERROR] 2023-07-05 22:15:01.169 [main] Client:187 - Cannot connect to server
+[ERROR] 2023-07-05 22:15:23.748 [main] Client:187 - Cannot connect to server
+[INFO ] 2023-07-05 22:15:26.836 [main] Client:33 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 22:21:18.145 [main] Client:32 - Connected to server at localhost: 3000
+[ERROR] 2023-07-05 22:21:58.519 [main] Client:186 - Cannot connect to server
+[INFO ] 2023-07-05 22:22:01.179 [main] Client:32 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 22:27:36.135 [main] Client:33 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 22:28:04.996 [main] Client:33 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 22:29:00.916 [main] Client:33 - Connected to server at localhost: 3000
+[ERROR] 2023-07-05 22:29:43.686 [main] Client:184 - Cannot connect to server
+[INFO ] 2023-07-05 22:29:50.674 [main] Client:33 - Connected to server at localhost: 3000
+[ERROR] 2023-07-05 22:33:33.465 [main] Client:184 - Cannot connect to server
+[INFO ] 2023-07-05 22:33:41.595 [main] Client:33 - Connected to server at localhost: 3000
+[ERROR] 2023-07-05 22:33:53.059 [main] Client:185 - Cannot connect to server
+[INFO ] 2023-07-05 22:34:41.402 [main] Client:33 - Connected to server at localhost: 3000
+[ERROR] 2023-07-05 22:37:35.680 [main] Client:185 - Cannot connect to server
+[INFO ] 2023-07-05 22:37:38.856 [main] Client:33 - Connected to server at localhost: 3000
+[ERROR] 2023-07-05 22:39:40.310 [main] Client:187 - Cannot connect to server
+[INFO ] 2023-07-05 22:39:43.467 [main] Client:33 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 22:42:17.398 [main] Client:33 - Connected to server at localhost: 3000
+[ERROR] 2023-07-05 22:42:30.116 [main] Client:186 - Cannot connect to server
+[INFO ] 2023-07-05 22:42:42.576 [main] Client:33 - Connected to server at localhost: 3000
+[ERROR] 2023-07-05 22:47:02.160 [main] Client:186 - Cannot connect to server
+[INFO ] 2023-07-05 22:47:04.729 [main] Client:34 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 22:49:53.946 [main] Client:34 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 23:27:39.802 [main] Client:35 - Connected to server at localhost: 3000
+[ERROR] 2023-07-05 23:28:18.542 [main] Client:215 - Cannot connect to server
+[INFO ] 2023-07-05 23:28:22.139 [main] Client:35 - Connected to server at localhost: 3000
+[ERROR] 2023-07-05 23:29:19.989 [main] Client:215 - Cannot connect to server
+[INFO ] 2023-07-05 23:29:22.481 [main] Client:35 - Connected to server at localhost: 3000
+[ERROR] 2023-07-05 23:30:12.932 [main] Client:216 - Cannot connect to server
+[INFO ] 2023-07-05 23:30:15.885 [main] Client:35 - Connected to server at localhost: 3000
+[INFO ] 2023-07-05 23:38:55.393 [main] Client:37 - Connected to server at localhost: 3000
+[ERROR] 2023-07-05 23:39:18.029 [main] Client:230 - Cannot connect to server
+[INFO ] 2023-07-06 00:07:29.006 [main] Client:37 - Connected to server at localhost: 3000
+[ERROR] 2023-07-06 00:07:40.681 [main] Client:217 - Cannot connect to server
+[INFO ] 2023-07-06 00:08:20.679 [main] Client:37 - Connected to server at localhost: 3000
+[INFO ] 2023-07-06 00:11:50.570 [main] Client:37 - Connected to server at localhost: 3000
+[ERROR] 2023-07-06 00:11:52.924 [main] Client:217 - Cannot connect to server
+[INFO ] 2023-07-06 00:26:41.865 [main] Client:37 - Connected to server at localhost: 3000
+[ERROR] 2023-07-06 13:31:42.854 [main] Client:225 - Cannot connect to server
+[INFO ] 2023-07-06 13:31:49.291 [main] Client:33 - Connected to server at localhost: 3000
+[ERROR] 2023-07-06 13:33:34.944 [main] Client:225 - Cannot connect to server
+[INFO ] 2023-07-06 13:33:46.139 [main] Client:33 - Connected to server at localhost: 3000
+[INFO ] 2023-07-06 13:36:07.183 [main] Client:33 - Connected to server at localhost: 3000
+[INFO ] 2023-07-06 15:33:40.736 [main] Client:33 - Connected to server at localhost: 3000
+[INFO ] 2023-07-06 15:42:10.067 [main] Client:33 - Connected to server at localhost: 3000
+[INFO ] 2023-07-06 16:03:26.292 [main] Client:33 - Connected to server at localhost: 3000
+[INFO ] 2023-07-06 16:07:04.989 [main] Client:33 - Connected to server at localhost: 3000
+[INFO ] 2023-07-06 16:07:43.399 [main] Client:33 - Connected to server at localhost: 3000
+[INFO ] 2023-07-06 22:10:57.004 [main] Client:33 - Connected to server at localhost: 3000
+[INFO ] 2023-07-06 22:16:24.177 [main] Client:33 - Connected to server at localhost: 3000
+[INFO ] 2023-07-06 22:35:56.631 [main] Client:34 - Connected to server at localhost: 3000
+[ERROR] 2023-07-06 22:36:12.349 [main] Client:332 - Cannot connect to server
+[INFO ] 2023-07-06 22:44:58.937 [main] Client:34 - Connected to server at localhost: 3000
+[INFO ] 2023-07-06 22:51:32.385 [main] Client:33 - Connected to server at localhost: 3000
+[INFO ] 2023-07-06 22:54:26.968 [main] Client:33 - Connected to server at localhost: 3000
+[INFO ] 2023-07-06 23:04:04.751 [main] Client:33 - Connected to server at localhost: 3000
+[INFO ] 2023-07-06 23:09:19.404 [main] Client:33 - Connected to server at localhost: 3000
+[INFO ] 2023-07-06 23:32:11.136 [main] Client:33 - Connected to server at localhost: 3000
+[INFO ] 2023-07-06 23:35:19.586 [main] Client:33 - Connected to server at localhost: 3000
+[INFO ] 2023-07-07 18:07:20.114 [main] Client:33 - Connected to server at localhost: 3000
+[INFO ] 2023-07-07 18:10:50.936 [main] Client:33 - Connected to server at localhost: 3000
+[ERROR] 2023-07-07 18:22:00.913 [main] Client:303 - Cannot connect to server
+[INFO ] 2023-07-07 18:22:31.800 [main] Client:34 - Connected to server at localhost: 3000
+[INFO ] 2023-07-07 18:23:23.773 [main] Client:34 - Connected to server at localhost: 3000
+[INFO ] 2023-07-07 18:26:37.850 [main] Client:34 - Connected to server at localhost: 3000
+[INFO ] 2023-07-07 18:26:40.613 [main] Client:34 - Connected to server at localhost: 3000
+[ERROR] 2023-07-07 22:09:11.043 [main] Client:303 - Cannot connect to server
+[INFO ] 2023-07-08 16:21:58.777 [main] Client:34 - Connected to server at localhost: 3000
