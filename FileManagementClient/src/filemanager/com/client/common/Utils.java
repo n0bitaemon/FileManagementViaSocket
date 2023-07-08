@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class Utils {
+	private Utils() {}
 	
 	public static String getCanonicalFilePath(String path) throws IOException {
 		File file = new File(Constants.APP_DIR, path);

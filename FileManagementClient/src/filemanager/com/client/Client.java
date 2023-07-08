@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import filemanager.com.client.command.Command;
+import filemanager.com.client.common.Constants;
 import filemanager.com.client.common.Environments;
 import filemanager.com.client.common.Utils;
 import filemanager.com.client.exception.ClientException;
@@ -50,19 +51,19 @@ public class Client implements AutoCloseable {
 		buffer.clear();
 		int numBytes = socketChannel.read(buffer);
 		if(numBytes == -1) {
-			return new Response(false, "No response from server");
+			return new Response(false, Constants.ERR_NO_RESPONSE);
 		}
 		
 		buffer.flip();
 		int status = buffer.getShort();
 		String message = new String(buffer.array(), 1, numBytes-1, StandardCharsets.UTF_8).trim();
 		
-		return new Response(status == 0 ? false : true, message);
+		return new Response(status != 0, message);
 	}
 
 	public void disconnect() throws IOException {
 		socketChannel.close();
-		LOGGER.info("Disconnected to server");
+		LOGGER.info(Constants.MSG_DISCONNECTED);
 	}
 
 	public void loop() throws ClientException {
@@ -129,23 +130,23 @@ public class Client implements AutoCloseable {
 					if(Environments.DEBUG_MODE) {
 						e.printStackTrace();
 					}
-					response.setResponse(false, "The server is disconnected!");
+					response.setResponse(false, Constants.MSG_DISCONNECTED);
 				} catch (BufferOverflowException e) {
 					if(Environments.DEBUG_MODE) {
 						e.printStackTrace();
 					}
-					response.setResponse(false, "Client error: Message to long!");
+					response.setResponse(false, Constants.ERR_MESSAGE_TO_LONG);
 				} catch (IOException e) {
 					if(Environments.DEBUG_MODE) {
 						e.printStackTrace();
 					}
-					response.setResponse(false, "Unexpected error!");
+					response.setResponse(false, Constants.ERR_UNEXPECTED);
 				}
 				
 				// If server validation success, continue sending packet
-				if(response.getStatus() == true) {
+				if(response.getStatus()) {
 					String sourceRaw = cmd.getArgs().get(0);
-					response = download(cmd, sourceRaw, dest);
+					response = download(sourceRaw, dest);
 				}else if(cmd.getName().equals("upload")) {
 					response.setResponse(true, "Uploaded");
 				}else {
@@ -153,6 +154,7 @@ public class Client implements AutoCloseable {
 					try {
 						Files.deleteIfExists(dest);
 					} catch (IOException e) {
+						System.out.println("Cannot delete file");
 					}
 				}
 				
@@ -185,23 +187,23 @@ public class Client implements AutoCloseable {
 					if(Environments.DEBUG_MODE) {
 						e.printStackTrace();
 					}
-					response.setResponse(false, "The server is disconnected!");
+					response.setResponse(false, Constants.MSG_DISCONNECTED);
 				} catch (BufferOverflowException e) {
 					if(Environments.DEBUG_MODE) {
 						e.printStackTrace();
 					}
-					response.setResponse(false, "Client error: Message to long!");
+					response.setResponse(false, Constants.ERR_MESSAGE_TO_LONG);
 				} catch (IOException e) {
 					if(Environments.DEBUG_MODE) {
 						e.printStackTrace();
 					}
-					response.setResponse(false, "Unexpected error!");
+					response.setResponse(false, Constants.ERR_UNEXPECTED);
 				}
 				
 				
 				// If the validation step success, start uploading
-				if(response.getStatus() == true) {
-					response = upload(cmd, source);
+				if(response.getStatus()) {
+					response = upload(source);
 				}
 				
 			}else {
@@ -212,17 +214,17 @@ public class Client implements AutoCloseable {
 					if(Environments.DEBUG_MODE) {
 						e.printStackTrace();
 					}
-					response.setResponse(false, "The server is disconnected!");
+					response.setResponse(false, Constants.MSG_DISCONNECTED);
 				} catch (BufferOverflowException e) {
 					if(Environments.DEBUG_MODE) {
 						e.printStackTrace();
 					}
-					response.setResponse(false, "Client error: Message to long!");
+					response.setResponse(false, Constants.ERR_MESSAGE_TO_LONG);
 				} catch (IOException e) {
 					if(Environments.DEBUG_MODE) {
 						e.printStackTrace();
 					}
-					response.setResponse(false, "Unexpected error!");
+					response.setResponse(false, Constants.ERR_UNEXPECTED);
 				}
 			}
 			
@@ -236,7 +238,7 @@ public class Client implements AutoCloseable {
 		sc.close();
 	}
 	
-	public Response upload(Command cmd, Path source) throws ClientException {
+	public Response upload(Path source) throws ClientException {
 		Response response = new Response();
 		ByteBuffer tftpBuffer = ByteBuffer.allocate(TFTPUtils.BUFSIZE);
 		
@@ -246,9 +248,9 @@ public class Client implements AutoCloseable {
 			tftpBuffer.clear();
 			do {
 				numBytes = socketChannel.read(tftpBuffer);
-			} while(!(numBytes > 0));
+			} while(numBytes <= 0);
 			
-			if(!TFTPUtils.checkPacket(socketChannel, tftpBuffer, TFTPUtils.OP_RRQ)) {
+			if(!TFTPUtils.checkPacket(tftpBuffer, TFTPUtils.OP_RRQ)) {
 				throw new ClientException();
 			}
 			
@@ -266,7 +268,7 @@ public class Client implements AutoCloseable {
 		}
 	}
 	
-	public Response download(Command cmd, String sourceRaw, Path dest) throws ClientException {
+	public Response download(String sourceRaw, Path dest) throws ClientException {
 		Response response;
 		
 		ByteBuffer tftpBuffer = ByteBuffer.allocate(TFTPUtils.BUFSIZE);

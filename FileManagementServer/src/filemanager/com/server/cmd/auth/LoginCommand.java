@@ -1,7 +1,5 @@
 package filemanager.com.server.cmd.auth;
 
-import java.sql.SQLException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -64,16 +62,15 @@ public class LoginCommand extends Command {
 			if (!Authentication.isUsernameInDb(username)) {
 				throw new InvalidCredentialsException();
 			}
-		}catch (SQLException e) {
+		}catch (Exception e) {
 			throw new ServerException();
 		}
-
 		try {
 			//check if the input password was right
 			if (!Authentication.isValidPassword(username, password)) {
 				throw new InvalidCredentialsException();
 			}
-		}catch (SQLException e) {
+		}catch (Exception e) {
 			throw new ServerException();
 		}
 		

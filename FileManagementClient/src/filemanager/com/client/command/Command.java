@@ -44,7 +44,7 @@ public class Command {
 	}
 	
 	public String toString() {
-		if(args.size() == 0)
+		if(args.isEmpty())
 			return name;
 		
 		StringBuilder cmdStr = new StringBuilder(name);

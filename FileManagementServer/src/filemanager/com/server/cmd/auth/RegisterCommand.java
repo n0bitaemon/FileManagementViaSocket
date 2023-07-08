@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.SQLException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,7 +55,7 @@ public class RegisterCommand extends Command {
 			if (Authentication.isUsernameInDb(username)) {
 				throw new UserAlreadyExistException(username);
 			}
-		}catch (SQLException e) {
+		}catch (Exception e) {
 			throw new ServerException();
 		}
 		
@@ -80,7 +79,7 @@ public class RegisterCommand extends Command {
 		
 		try {
 			Authentication.addAccountToDatabase(username, password);
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			if(Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}

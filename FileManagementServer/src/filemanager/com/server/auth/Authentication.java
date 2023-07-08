@@ -26,7 +26,7 @@ public class Authentication {
 
 	private static final Logger LOGGER = LogManager.getLogger(Authentication.class);
 
-	public static Dictionary<SocketAddress, String> session = new Hashtable<>();
+	public static final Dictionary<SocketAddress, String> session = new Hashtable<>();
 
 	/**
 	 * 
@@ -35,16 +35,18 @@ public class Authentication {
 	 * @param username
 	 * @param pass
 	 * @throws SQLException
+	 * @throws ClassNotFoundException 
 	 */
-	public static void addAccountToDatabase(String username, String pass) throws SQLException {
+	public static void addAccountToDatabase(String username, String pass) throws SQLException, ClassNotFoundException {
 		try (Connection conn = SQLConnector.getConnection()) {
 			String query = "insert into account values(?, ?)";
-			PreparedStatement stat = conn.prepareStatement(query);
-			stat.setString(1, username);
-			stat.setString(2, pass);
+			try (PreparedStatement stat = conn.prepareStatement(query)){
+				stat.setString(1, username);
+				stat.setString(2, pass);
 
-			stat.executeUpdate();
-			LOGGER.info("Created username {}", username);
+				stat.executeUpdate();
+				LOGGER.info("Created username {}", username);
+			}
 		}
 	}
 
@@ -54,27 +56,29 @@ public class Authentication {
 	 * @param username
 	 * @return
 	 * @throws SQLException
+	 * @throws ClassNotFoundException 
 	 */
-	public static boolean isUsernameInDb(String username) throws SQLException {
+	public static boolean isUsernameInDb(String username) throws SQLException, ClassNotFoundException {
 		try (Connection conn = SQLConnector.getConnection()) {
 			String dbUsername = null;
 			boolean isUsernameInDb = false;
 
 			String query = "select * from account where username =?";
-			PreparedStatement stat = conn.prepareStatement(query);
-			stat.setString(1, username);
-
-			ResultSet res = stat.executeQuery();
-
-			while (res.next()) {
-				dbUsername = res.getString("username");
+			try(PreparedStatement stat = conn.prepareStatement(query)){
+				stat.setString(1, username);
+	
+				ResultSet res = stat.executeQuery();
+	
+				while (res.next()) {
+					dbUsername = res.getString("username");
+				}
+	
+				if (dbUsername != null) {
+					isUsernameInDb = true;
+				}
+	
+				return isUsernameInDb;
 			}
-
-			if (dbUsername != null) {
-				isUsernameInDb = true;
-			}
-
-			return isUsernameInDb;
 		}
 	}
 
@@ -86,26 +90,29 @@ public class Authentication {
 	 * @param pass
 	 * @return
 	 * @throws SQLException
+	 * @throws ClassNotFoundException 
 	 */
-	public static boolean isValidPassword(String username, String pass) throws SQLException {
+	public static boolean isValidPassword(String username, String pass) throws SQLException, ClassNotFoundException {
 		try (Connection conn = SQLConnector.getConnection()) {
 			String dbPass = null;
 			boolean isValidPass = false;
 
 			String query = "select * from account where username =?";
-			PreparedStatement stat = conn.prepareStatement(query);
-			stat.setString(1, username);
+			try(PreparedStatement stat = conn.prepareStatement(query)){
+				stat.setString(1, username);
 
-			ResultSet res = stat.executeQuery();
+				ResultSet res = stat.executeQuery();
 
-			while (res.next()) {
-				dbPass = res.getString("password");
+				while (res.next()) {
+					dbPass = res.getString("password");
+				}
+
+				if (pass.equals(dbPass)) {
+					isValidPass = true;
+				}
+				return isValidPass;
 			}
-
-			if (pass.equals(dbPass)) {
-				isValidPass = true;
-			}
-			return isValidPass;
+			
 		}
 	}
 
