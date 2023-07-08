@@ -51,4 +51,4 @@ If you want to change database name, you must also change the database name in `
         Ex: mkdir just/a/test
 
 # How the server works
-After registration, a folder will be created in `storage` folder on the server filesystem (the name of folder is the registered username). For example, with the command `reg examiner defaultpass`, a folder with path `storage/examiner` will be created and it will be the root folder for the examiner user.
+After registration, a folder will be created in `storage` folder on the server filesystem (the name of folder is the registered username). For example, with the command `reg examiner defaultpass`, a folder with path `storage/examiner` will be created and it will be the root folder for the examiner user. It means, if you type `/test/abc` as a path, it will correspond to `storage/examiner/test/abc` in the server filesystem.
