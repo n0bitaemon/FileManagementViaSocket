@@ -24,6 +24,14 @@ import filemanager.com.server.exception.NotADirectoryException;
 import filemanager.com.server.exception.NotLoggedInException;
 import filemanager.com.server.exception.ServerException;
 
+/**
+ * Usage: List all files/subfolder in a folder <br>
+ * Syntax: ls [{@literal <}path>] <br>
+ * Arguments:
+ * - path (optional): path on user's server storage
+ * @author n0bita-windows
+ *
+ */
 public class ListFileCommand extends AuthCommand {
 	private static final Logger LOGGER = LogManager.getLogger(ListFileCommand.class);
 	

@@ -8,6 +8,10 @@ import filemanager.com.server.common.Environments;
 public class SQLConnector {
 	private SQLConnector() {}
 
+	/**
+	 * Connect to database
+	 * @return Connection
+	 */
 	public static Connection getConnection() {
 		try {
 			Class.forName("com.mysql.cj.Driver");

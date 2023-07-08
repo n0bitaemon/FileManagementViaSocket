@@ -12,6 +12,11 @@ import java.nio.file.Path;
 import filemanager.com.server.common.Environments;
 import filemanager.com.server.exception.ServerException;
 
+/**
+ * Provides methods to run TFTP protocol
+ * @author n0bita-windows
+ *
+ */
 public class TFTPUtils {
 	public static final int BUFSIZE = 516;
 	
@@ -67,6 +72,13 @@ public class TFTPUtils {
 		socketChannel.write(buffer);
 	}
 	
+	/**
+	 * Send a packet with status 1 (success)
+	 * 
+	 * @param socketChannel
+	 * @param buffer
+	 * @throws IOException
+	 */
 	public static void sendSuccessStatus(SocketChannel socketChannel, ByteBuffer buffer) throws IOException {
 		buffer.clear();
 		buffer.putShort((short) 1);
@@ -93,6 +105,14 @@ public class TFTPUtils {
 		socketChannel.write(buffer);
 	}
 	
+	/**
+	 * Send TFTP ACK packet
+	 * 
+	 * @param socketChannel
+	 * @param buffer
+	 * @param blockNum Block number of file
+	 * @throws IOException
+	 */
 	public static void sendACKPacket(SocketChannel socketChannel, ByteBuffer buffer, short blockNum) throws IOException {
 		buffer.clear();
 		buffer.putShort(TFTPUtils.OP_ACK);
@@ -101,6 +121,14 @@ public class TFTPUtils {
 		socketChannel.write(buffer);
 	}
 	
+	/**
+	 * Send TFTP RRQ packet
+	 * 
+	 * @param source The destination path
+	 * @param socketChannel
+	 * @param buffer
+	 * @throws IOException
+	 */
 	public static void sendRRQPacket(String source, SocketChannel socketChannel, ByteBuffer buffer) throws IOException {
 		buffer.clear();
 		buffer.putShort(OP_RRQ);
@@ -112,6 +140,14 @@ public class TFTPUtils {
 		socketChannel.write(buffer);
 	}
 	
+	/**
+	 * Start sending file block by block, and wait for coming ACK packet
+	 * @param source
+	 * @param socketChannel
+	 * @param buffer
+	 * @return true if file is sent successfully, false otherwise
+	 * @throws ServerException
+	 */
 	public static boolean sendFile(File source, SocketChannel socketChannel, ByteBuffer buffer) throws ServerException {
 		try(FileInputStream fis = new FileInputStream(source)){
 			short blockNum = 1;
@@ -155,6 +191,14 @@ public class TFTPUtils {
 		
 	}
 	
+	/**
+	 * Read file from client block by block, and send ACK packet with each received block
+	 * @param dest The location of uploaded file
+	 * @param socketChannel
+	 * @param buffer
+	 * @return
+	 * @throws ServerException
+	 */
 	public static boolean receiveFile(Path dest, SocketChannel socketChannel, ByteBuffer buffer) throws ServerException {
 		short blockNum = 1;
 		short opcode;

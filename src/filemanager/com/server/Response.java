@@ -1,5 +1,11 @@
 package filemanager.com.server;
 
+/**
+ * A response from server
+ * <br>
+ * @author n0bita-windows
+ *
+ */
 public class Response {
 	private boolean status;
 	private String message;

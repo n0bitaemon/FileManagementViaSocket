@@ -21,6 +21,16 @@ import filemanager.com.server.exception.NoPermissionException;
 import filemanager.com.server.exception.NotLoggedInException;
 import filemanager.com.server.exception.ServerException;
 
+/**
+ * Usage: Copy file from source path to destination path <br>
+ * Syntax: copy {@literal <}source> {@literal <}dest> <br>
+ * Arguments: <br>
+ * - source: existed file/folder on user's server storage <br>
+ * - dest: new file/folder on user's server storage
+ * 
+ * @author n0bita-windows
+ *
+ */
 public class FileCopyCommand extends AuthCommand {
 	private static final Logger LOGGER = LogManager.getLogger(FileCopyCommand.class);
 	

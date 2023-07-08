@@ -23,6 +23,16 @@ import filemanager.com.server.exception.NoPermissionException;
 import filemanager.com.server.exception.NotLoggedInException;
 import filemanager.com.server.exception.ServerException;
 
+/**
+ * Usage: Upload a local file to server <br>
+ * Syntax: upload {@literal <}source> {@literal <}dest> <br>
+ * Arguments: <br>
+ * - source: a file on local storage <br>
+ * - dest: a new file on user's server storage
+ * 
+ * @author n0bita-windows
+ *
+ */
 public class FileUploadCommand extends AuthCommand {
 	private static final Logger LOGGER = LogManager.getLogger(FileDownloadCommand.class);
 

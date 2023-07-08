@@ -23,6 +23,15 @@ import filemanager.com.server.exception.NoPermissionException;
 import filemanager.com.server.exception.NotLoggedInException;
 import filemanager.com.server.exception.ServerException;
 
+/**
+ * Usage: Delete a file or directory on server <br>
+ * Syntax: rm {@literal <}path> <br>
+ * Arguments: <br>
+ * - path: a existed file or directory on user's server storage.
+ * 
+ * @author n0bita-windows
+ *
+ */
 public class FileDeleteCommand extends AuthCommand {
 	private static final Logger LOGGER = LogManager.getLogger(FileDeleteCommand.class);
 

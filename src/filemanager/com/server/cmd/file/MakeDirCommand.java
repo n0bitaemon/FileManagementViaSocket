@@ -20,6 +20,15 @@ import filemanager.com.server.exception.NoPermissionException;
 import filemanager.com.server.exception.NotLoggedInException;
 import filemanager.com.server.exception.ServerException;
 
+/**
+ * Usage: Create new directory <br>
+ * Syntax: mkdir {@literal <}dirname> <br>
+ * Arguments: <br>
+ * - dirname: new directory name
+ * 
+ * @author n0bita-windows
+ *
+ */
 public class MakeDirCommand extends AuthCommand {
 	private static final Logger LOGGER = LogManager.getLogger(MakeDirCommand.class);
 

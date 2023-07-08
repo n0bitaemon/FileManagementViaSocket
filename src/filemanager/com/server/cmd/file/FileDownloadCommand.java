@@ -24,6 +24,16 @@ import filemanager.com.server.exception.NotAFileException;
 import filemanager.com.server.exception.NotLoggedInException;
 import filemanager.com.server.exception.ServerException;
 
+/**
+ * Usage: Download a file from server <br>
+ * Syntax: download {@literal <}source> {@literal <}dest> <br>
+ * Arguments: <br>
+ * - source: a file in user's server storage <br>
+ * - dest: a file on user's local storage that is not existed yet
+ * 
+ * @author n0bita-windows
+ *
+ */
 public class FileDownloadCommand extends AuthCommand {
 	private static final Logger LOGGER = LogManager.getLogger(FileDownloadCommand.class);
 	

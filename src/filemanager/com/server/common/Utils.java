@@ -13,6 +13,11 @@ import java.util.StringTokenizer;
 import filemanager.com.server.auth.Authentication;
 import filemanager.com.server.exception.InvalidCommandException;
 
+/**
+ * Common utility functions that will be used by other classes
+ * @author n0bita-windows
+ *
+ */
 public class Utils {
 	private Utils() {
 		

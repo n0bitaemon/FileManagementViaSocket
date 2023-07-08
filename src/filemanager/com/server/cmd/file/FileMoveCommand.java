@@ -21,6 +21,15 @@ import filemanager.com.server.exception.NoPermissionException;
 import filemanager.com.server.exception.NotLoggedInException;
 import filemanager.com.server.exception.ServerException;
 
+/**
+ * Move file/folder from one place to another <br>
+ * Syntax: mv {@literal <}source> {@literal <}dest> <br>
+ * source: a existed file/folder on user's server storage <br>
+ * dest: a new file/folder on user's server storage 
+ * 
+ * @author n0bita-windows
+ *
+ */
 public class FileMoveCommand extends AuthCommand {
 	private static final Logger LOGGER = LogManager.getLogger(FileMoveCommand.class);
 

@@ -5,6 +5,12 @@ import java.util.List;
 import filemanager.com.server.common.Constants;
 import filemanager.com.server.common.Utils;
 
+/**
+ * Common validators
+ * 
+ * @author n0bita-windows
+ *
+ */
 public class Validator {
 	private Validator() {
 		
@@ -18,8 +24,14 @@ public class Validator {
 		return args.size() == validNum;
 	}
 
-	public static boolean checkPermission(String canonicalFilePath, String userDir) {
-		String userFolder = Constants.STORAGE_DIR + userDir;
-		return canonicalFilePath.startsWith(userFolder);
+	/**
+	 * Check if a user has the permission to access a path
+	 * @param path The path that user want to access
+	 * @param username The username of user
+	 * @return true, false
+	 */
+	public static boolean checkPermission(String path, String username) {
+		String userFolder = Constants.STORAGE_DIR + username;
+		return path.startsWith(userFolder);
 	}
 }
