@@ -348,8 +348,8 @@ public class Client implements AutoCloseable {
 			client.loop();
 			client.disconnect();
 		} catch (Exception e) {
-			LOGGER.error("Cannot connect to server");
-			e.printStackTrace();
+			LOGGER.error("Cannot start client");
+			System.out.println("Cannot start client");
 		}
 
 	}

@@ -374,3 +374,14 @@
 [INFO ] 2023-07-08 22:39:08.083 [main] Client:41 - Connected to server at localhost: 3000
 [INFO ] 2023-07-08 22:39:33.201 [main] Client:232 - Received success status
 [INFO ] 2023-07-08 22:44:51.552 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 22:59:18.716 [main] Client:41 - Connected to server at localhost: 3000
+[ERROR] 2023-07-08 22:59:24.381 [main] Client:351 - Cannot connect to server
+[ERROR] 2023-07-08 23:00:09.392 [main] Client:351 - Cannot start client
+[ERROR] 2023-07-08 23:00:25.386 [main] Client:351 - Cannot start client
+[INFO ] 2023-07-08 23:23:29.794 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 23:24:24.676 [main] Client:72 - Disconnected to server
+[INFO ] 2023-07-08 23:24:24.676 [main] Client:72 - Disconnected to server
+[INFO ] 2023-07-08 23:25:16.596 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 23:25:47.660 [main] Client:232 - Received success status
+[INFO ] 2023-07-08 23:25:52.750 [main] Client:72 - Disconnected to server
+[INFO ] 2023-07-08 23:25:52.751 [main] Client:72 - Disconnected to server
