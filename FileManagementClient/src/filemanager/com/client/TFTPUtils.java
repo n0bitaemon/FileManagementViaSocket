@@ -93,42 +93,42 @@ public class TFTPUtils {
 	}
 	
 	public static boolean sendFile(File source, SocketChannel socketChannel, ByteBuffer buffer) throws IOException {
-		FileInputStream fis = new FileInputStream(source);
 		short blockNum = 1;
 		byte[] buf = new byte[TFTPUtils.BUFSIZE - 4];
-		while(true) {
-			int length;
-			length = fis.read(buf);
-			if(length == -1) {
-				length = 0;
-			}
+		try(FileInputStream fis = new FileInputStream(source)) {
+			while(true) {
+				int length;
+				length = fis.read(buf);
+				if(length == -1) {
+					length = 0;
+				}
 
-			// Send DAT #blockNum packet
-			sendDATPacket(socketChannel, buffer, blockNum, buf, length);
-			
-			// Receive ACK #blockNum
-			buffer.clear();
-			int numBytes;
-			do {
-				numBytes = socketChannel.read(buffer);
-			}while(numBytes <= 0);
+				// Send DAT #blockNum packet
+				sendDATPacket(socketChannel, buffer, blockNum, buf, length);
+				
+				// Receive ACK #blockNum
+				buffer.clear();
+				int numBytes;
+				do {
+					numBytes = socketChannel.read(buffer);
+				}while(numBytes <= 0);
 
-			if(!checkPacket(buffer, OP_ACK)) {
-				fis.close();
-				return false;
+				if(!checkPacket(buffer, OP_ACK)) {
+					fis.close();
+					return false;
+				}
+				
+				// Check for the last packet
+				if(length < 512) {
+					fis.close();
+					break;
+				}
+				
+				// increase blockNum by 1
+				blockNum += 1;
 			}
-			
-			// Check for the last packet
-			if(length < 512) {
-				fis.close();
-				break;
-			}
-			
-			// increase blockNum by 1
-			blockNum += 1;
+			return true;
 		}
-		fis.close();
-		return true;
 	}
 	
 	

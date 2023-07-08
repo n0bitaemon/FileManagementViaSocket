@@ -280,3 +280,5 @@
 [INFO ] 2023-07-07 18:26:40.613 [main] Client:34 - Connected to server at localhost: 3000
 [ERROR] 2023-07-07 22:09:11.043 [main] Client:303 - Cannot connect to server
 [INFO ] 2023-07-08 16:21:58.777 [main] Client:34 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 18:58:42.352 [main] Client:35 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 18:58:49.027 [main] Client:66 - Disconnected to server

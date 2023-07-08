@@ -12,7 +12,6 @@ import filemanager.com.server.auth.Authentication;
 import filemanager.com.server.cmd.Command;
 import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.common.Constants;
-import filemanager.com.server.common.Environments;
 import filemanager.com.server.common.Utils;
 import filemanager.com.server.exception.InvalidNumberOfArgsException;
 import filemanager.com.server.exception.InvalidUsernameException;
@@ -80,9 +79,6 @@ public class RegisterCommand extends Command {
 		try {
 			Authentication.addAccountToDatabase(username, password);
 		} catch (Exception e) {
-			if(Environments.DEBUG_MODE) {
-				e.printStackTrace();
-			}
 			throw new ServerException();
 		}
 		
@@ -90,9 +86,6 @@ public class RegisterCommand extends Command {
 		try {
 			Files.createDirectories(path);
 		} catch (IOException e) {
-			if (Environments.DEBUG_MODE) {
-				e.printStackTrace();
-			}
 			throw new ServerException();
 		}
 		

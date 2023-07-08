@@ -9,7 +9,6 @@ import java.nio.channels.SocketChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import filemanager.com.server.common.Environments;
 import filemanager.com.server.exception.ServerException;
 
 /**
@@ -183,9 +182,6 @@ public class TFTPUtils {
 			}
 			return true;
 		}catch (IOException e) {
-			if(Environments.DEBUG_MODE) {
-				e.printStackTrace();
-			}
 			throw new ServerException();
 		}
 		
@@ -241,9 +237,6 @@ public class TFTPUtils {
 			
 			return true;
 		} catch (IOException e) {
-			if(Environments.DEBUG_MODE) {
-				e.printStackTrace();
-			}
 			throw new ServerException();
 		}
 		

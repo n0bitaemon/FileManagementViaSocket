@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import filemanager.com.server.common.Environments;
+import io.github.cdimascio.dotenv.Dotenv;
 
 public class SQLConnector {
 	private SQLConnector() {}
@@ -16,8 +16,10 @@ public class SQLConnector {
 	 * @throws SQLException 
 	 */
 	public static Connection getConnection() throws ClassNotFoundException, SQLException {
-		Class.forName("com.mysql.cj.Driver");
-		return DriverManager.getConnection(Environments.JDBC_URL, 
-				Environments.JDBC_USR, Environments.JDBC_PWD);
+		Dotenv dotenv = Dotenv.load();
+		
+		Class.forName(dotenv.get("JDBC_DRIVER"));
+		return DriverManager.getConnection(dotenv.get("JDBC_URL"), 
+				dotenv.get("JDBC_USR"), dotenv.get("JDBC_PWD"));
 	}
 }
