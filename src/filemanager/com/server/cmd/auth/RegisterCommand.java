@@ -22,6 +22,16 @@ import filemanager.com.server.exception.ServerException;
 import filemanager.com.server.exception.UserAlreadyExistException;
 import filemanager.com.server.exception.UserAlreadyLoginException;
 
+/**
+ * Register new account <br>
+ * Syntax: reg {@literal <}username> {@literal <}password><br>
+ * Arguments: <br>
+ * - username: Account's username <br>
+ * - password: Account's password
+ * 
+ * @author cuong
+ *
+ */
 public class RegisterCommand extends Command {
 	private static final Logger LOGGER = LogManager.getLogger(LoginCommand.class);
 	

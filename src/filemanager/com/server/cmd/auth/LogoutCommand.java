@@ -11,6 +11,12 @@ import filemanager.com.server.exception.InvalidNumberOfArgsException;
 import filemanager.com.server.exception.NotLoggedInException;
 import filemanager.com.server.exception.ServerException;
 
+/**
+ * Logout user <br>
+ * Syntax: logout
+ * @author cuong
+ *
+ */
 public class LogoutCommand extends AuthCommand {
 	private static final Logger LOGGER = LogManager.getLogger(LogoutCommand.class);
 

@@ -14,6 +14,15 @@ import filemanager.com.server.exception.InvalidNumberOfArgsException;
 import filemanager.com.server.exception.ServerException;
 import filemanager.com.server.exception.UserAlreadyLoginException;
 
+/**
+ * Authenticate user <br>
+ * Syntax: login {@literal <}username> {@literal <}password><br>
+ * Arguments: <br>
+ * - username: User's username <br>
+ * - password: User's password
+ * @author cuong
+ *
+ */
 public class LoginCommand extends Command {
 	private static final Logger LOGGER = LogManager.getLogger(LoginCommand.class);
 
@@ -29,12 +38,15 @@ public class LoginCommand extends Command {
 		if (Authentication.channelIsLoging(this.remoteAddress)) {
 			throw new UserAlreadyLoginException(Authentication.session.get(this.remoteAddress));
 		}
+		
+		//check if the account that user loged in is being used in any others address. if true, log out this account from found address
 		String username = this.args.get(0);
 		if (Authentication.accIsLoging(username)) {
 			Authentication.session.remove(Authentication.accOfChannel(username));
 		}
 		
-		if (!username.matches("[a-zA-Z0-9]+")) { // no need since user can't create account with this kind of username 
+		//check if user input an username contains any non-alphanumeric character
+		if (!username.matches("[a-zA-Z0-9]+")) { 
 			throw new InvalidCredentialsException();
 		}
 
@@ -48,6 +60,7 @@ public class LoginCommand extends Command {
 		String password = this.args.get(1);
 		
 		try {
+			//check if account exist
 			if (!Authentication.isUsernameInDb(username)) {
 				throw new InvalidCredentialsException();
 			}
@@ -56,6 +69,7 @@ public class LoginCommand extends Command {
 		}
 
 		try {
+			//check if the input password was right
 			if (!Authentication.isValidPassword(username, password)) {
 				throw new InvalidCredentialsException();
 			}
@@ -63,6 +77,7 @@ public class LoginCommand extends Command {
 			throw new ServerException();
 		}
 		
+		//insert a pair value: address, username; express that this account is being used in this address
 		Authentication.session.put(this.remoteAddress, username);
 
 		return "Logged in as " + this.args.get(0);
