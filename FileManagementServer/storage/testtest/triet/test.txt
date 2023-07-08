@@ -1,2 +1,0 @@
-IDS00-J: Sử dụng PreparedStatement để chặn SQLi
-JDS01-J: Sử dụng Normalizer.normalize để chuẩn hóa xâu

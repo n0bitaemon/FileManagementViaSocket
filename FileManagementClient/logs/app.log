@@ -385,3 +385,6 @@
 [INFO ] 2023-07-08 23:25:47.660 [main] Client:232 - Received success status
 [INFO ] 2023-07-08 23:25:52.750 [main] Client:72 - Disconnected to server
 [INFO ] 2023-07-08 23:25:52.751 [main] Client:72 - Disconnected to server
+[INFO ] 2023-07-08 23:27:30.820 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 23:27:57.330 [main] Client:232 - Received success status
+[INFO ] 2023-07-08 23:28:07.900 [main] Client:232 - Received success status
