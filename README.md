@@ -52,3 +52,8 @@ If you want to change database name, you must also change the database name in `
 
 # How the server works
 After registration, a folder will be created in `storage` folder on the server filesystem (the name of folder is the registered username). For example, with the command `reg examiner defaultpass`, a folder with path `storage/examiner` will be created and it will be the root folder for the examiner user. It means, if you type `/test/abc` as a path, it will correspond to `storage/examiner/test/abc` in the server filesystem.
+
+Notes: If there are a machine logged in an account that you are going to log in, the first machine will be logged out and you will be logged in.
+
+# Question
+Please contact `Nguyen Minh Triet 20214975` or `Nguyen Tuan Cuong 20214950` for further information.
