@@ -17,6 +17,7 @@ import filemanager.com.server.common.Constants;
 import filemanager.com.server.common.Environments;
 import filemanager.com.server.common.Utils;
 import filemanager.com.server.exception.FileAlreadyExistException;
+import filemanager.com.server.exception.FileTooLargeException;
 import filemanager.com.server.exception.InvalidNumberOfArgsException;
 import filemanager.com.server.exception.InvalidPathException;
 import filemanager.com.server.exception.NoPermissionException;
@@ -90,7 +91,26 @@ public class FileUploadCommand extends AuthCommand {
 		ByteBuffer tftpBuffer = ByteBuffer.allocate(TFTPUtils.BUFSIZE);
 		
 		try {
+			int numBytes; 
+			
 			// Send validation success status
+			TFTPUtils.sendSuccessStatus(socketChannel, tftpBuffer);
+			
+			// Receive fileSize
+			tftpBuffer.clear();
+			do {
+				numBytes = socketChannel.read(tftpBuffer);
+			} while(numBytes <= 0);
+			
+			long fileSize = TFTPUtils.receiveFileSize(tftpBuffer);
+			if(fileSize == -1) {
+				throw new ServerException();
+			}else if(fileSize > 10485760) {
+				// Maximum file size is 10MB
+				throw new FileTooLargeException();
+			}
+			
+			// Send filesize validation status
 			TFTPUtils.sendSuccessStatus(socketChannel, tftpBuffer);
 			
 			// Send RRQ packet

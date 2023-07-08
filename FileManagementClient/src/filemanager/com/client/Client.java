@@ -174,10 +174,8 @@ public class Client implements AutoCloseable {
 						System.out.println("Error while downloading file");
 						continue;
 					}
-				}else if(cmd.getName().equals("upload")) {
-					response.setResponse(true, "Uploaded");
 				}else {
-					// Delete if fail validation
+					// Delete created file if validation fail
 					try {
 						Files.deleteIfExists(dest);
 					} catch (IOException e) {
@@ -231,6 +229,7 @@ public class Client implements AutoCloseable {
 				// If the validation step success, start uploading
 				if(response.getStatus()) {
 					try {
+						LOGGER.info("Received success status");
 						response = upload(source);
 					} catch (ClientException e) {
 						if(Environments.DEBUG_MODE) {
@@ -276,6 +275,19 @@ public class Client implements AutoCloseable {
 		
 		try {
 			int numBytes;
+			// Send fileSize
+			TFTPUtils.sendFileSize(source, socketChannel, tftpBuffer);
+			
+			// Receive fileSize validation response
+			tftpBuffer.clear();
+			do {
+				numBytes = socketChannel.read(tftpBuffer);
+			} while(numBytes <= 0);
+			if(!TFTPUtils.receiveSuccessStatus(tftpBuffer)) {
+				// Reject file with the given size
+				return new Response(false, "File size not valid");
+			}
+			
 			// Receive RRQ packet
 			tftpBuffer.clear();
 			do {
@@ -311,7 +323,6 @@ public class Client implements AutoCloseable {
 		try {
 			// Send RRQ packet
 			TFTPUtils.sendRRQPacket(sourceRaw, socketChannel, tftpBuffer);
-			
 			
 			// Receive file
 			TFTPUtils.receiveFile(dest, socketChannel, tftpBuffer);

@@ -16,6 +16,7 @@ import filemanager.com.server.common.Environments;
 import filemanager.com.server.common.Utils;
 import filemanager.com.server.exception.InvalidNumberOfArgsException;
 import filemanager.com.server.exception.InvalidUsernameException;
+import filemanager.com.server.exception.LengthNotInRangeException;
 import filemanager.com.server.exception.MinLengthException;
 import filemanager.com.server.exception.ServerException;
 import filemanager.com.server.exception.UserAlreadyExistException;
@@ -66,8 +67,12 @@ public class RegisterCommand extends Command {
 			throw new InvalidUsernameException();
 		}
 		
-		if(password.length() <= 6) {
-			throw new MinLengthException("password", 6);
+		// Only allow username and password with length in range (6, 32)
+		if(password.length() < 6 || password.length() > 32) {
+			throw new LengthNotInRangeException(6, 32, "password");
+		}
+		if(username.length() < 6 || username.length() > 32) {
+			throw new LengthNotInRangeException(6, 32, "username");
 		}
 		
 		return true;
@@ -80,12 +85,6 @@ public class RegisterCommand extends Command {
 		String username = this.args.get(0);
 		String password = this.args.get(1);
 		
-		try {
-			Authentication.addAccountToDatabase(username, password);
-		} catch (Exception e) {
-			throw new ServerException();
-		}
-		
 		Path path = Paths.get(Constants.STORAGE_DIR + username);
 		try {
 			Files.createDirectories(path);
@@ -93,6 +92,12 @@ public class RegisterCommand extends Command {
 			if(Environments.DEBUG_MODE) {
 				e.printStackTrace();
 			}
+			throw new ServerException();
+		}
+		
+		try {
+			Authentication.addAccountToDatabase(username, password);
+		} catch (Exception e) {
 			throw new ServerException();
 		}
 		

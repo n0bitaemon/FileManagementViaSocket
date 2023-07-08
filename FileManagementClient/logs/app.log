@@ -333,3 +333,44 @@
 [INFO ] 2023-07-08 20:44:25.683 [main] Client:41 - Connected to server at localhost: 3000
 [INFO ] 2023-07-08 20:44:38.697 [main] Client:72 - Disconnected to server
 [INFO ] 2023-07-08 20:44:38.697 [main] Client:72 - Disconnected to server
+[INFO ] 2023-07-08 21:23:59.171 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 21:32:10.385 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 21:33:07.380 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 21:33:44.231 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 21:34:31.827 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 21:35:06.857 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 21:35:24.002 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 22:03:53.938 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 22:06:48.250 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 22:06:49.888 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 22:14:33.795 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 22:16:22.000 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 22:17:44.388 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 22:20:55.598 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 22:21:04.431 [main] Client:279 - Sent file size
+[INFO ] 2023-07-08 22:22:25.401 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 22:22:37.533 [main] Client:280 - Sent file size
+[INFO ] 2023-07-08 22:22:50.150 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 22:23:11.722 [main] Client:232 - Received success status
+[INFO ] 2023-07-08 22:23:11.724 [main] Client:280 - Sent file size
+[INFO ] 2023-07-08 22:25:13.414 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 22:25:23.824 [main] Client:232 - Received success status
+[INFO ] 2023-07-08 22:25:23.826 [main] Client:280 - Sent file size
+[INFO ] 2023-07-08 22:27:04.650 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 22:27:14.086 [main] Client:232 - Received success status
+[INFO ] 2023-07-08 22:27:14.088 [main] Client:280 - Sent file size
+[INFO ] 2023-07-08 22:27:14.088 [main] Client:291 - Received fileSize response
+[INFO ] 2023-07-08 22:30:02.310 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 22:30:11.771 [main] Client:232 - Received success status
+[INFO ] 2023-07-08 22:30:11.773 [main] Client:280 - Sent file size
+[INFO ] 2023-07-08 22:30:11.773 [main] Client:291 - Received fileSize response
+[INFO ] 2023-07-08 22:30:11.774 [main] Client:302 - Received RRQ
+[INFO ] 2023-07-08 22:32:09.967 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 22:32:26.728 [main] Client:232 - Received success status
+[INFO ] 2023-07-08 22:34:15.628 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 22:34:28.564 [main] Client:232 - Received success status
+[INFO ] 2023-07-08 22:36:51.305 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 22:36:59.427 [main] Client:232 - Received success status
+[INFO ] 2023-07-08 22:39:08.083 [main] Client:41 - Connected to server at localhost: 3000
+[INFO ] 2023-07-08 22:39:33.201 [main] Client:232 - Received success status
+[INFO ] 2023-07-08 22:44:51.552 [main] Client:41 - Connected to server at localhost: 3000

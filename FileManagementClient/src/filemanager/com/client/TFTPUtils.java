@@ -60,6 +60,42 @@ public class TFTPUtils {
 	}
 	
 	/**
+	 * Read file size from buffer
+	 * @param buffer
+	 * @return
+	 */
+	public static long receiveFileSize(ByteBuffer buffer) {
+		buffer.flip();
+		int status = buffer.getShort();
+		if(status != 1)
+			return -1;
+		long fileSize = buffer.getLong();
+		if(fileSize > 0)
+			return fileSize;
+		return -1;
+	}
+	
+	/**
+	 * Send a packet with status 1 (success)
+	 * 
+	 * @param socketChannel
+	 * @param buffer
+	 * @throws IOException
+	 */
+	public static void sendSuccessStatus(SocketChannel socketChannel, ByteBuffer buffer) throws IOException {
+		buffer.clear();
+		buffer.putShort((short) 1);
+		buffer.flip();
+		socketChannel.write(buffer);
+	}
+	
+	public static boolean receiveSuccessStatus(ByteBuffer buffer) {
+		buffer.flip();
+		int status = buffer.getShort();
+		return status == 1;
+	}
+	
+	/**
 	 * Send TFTP DAT packet
 	 * 
 	 * @param socketChannel
@@ -135,9 +171,6 @@ public class TFTPUtils {
 			return true;
 		}
 	}
-	
-	
-	
 	
 	public static boolean receiveFile(Path dest, SocketChannel socketChannel, ByteBuffer buffer) throws IOException {
 		short blockNum = 1;
