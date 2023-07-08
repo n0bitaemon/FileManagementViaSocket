@@ -31,7 +31,7 @@ import filemanager.com.server.exception.ServerException;
  * - source: a file in user's server storage <br>
  * - dest: a file on user's local storage that is not existed yet
  * 
- * @author n0bita-windows
+ * @author Triet
  *
  */
 public class FileDownloadCommand extends AuthCommand {

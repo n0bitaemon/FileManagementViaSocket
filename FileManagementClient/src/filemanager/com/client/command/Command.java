@@ -23,6 +23,7 @@ public class Command {
 		if(msgArr == null) {
 			throw new InvalidCommandException();
 		}
+
 		if(msgArr.length == 0) {
 			throw new InvalidCommandException();
 		}
@@ -48,8 +49,12 @@ public class Command {
 			return name;
 		
 		StringBuilder cmdStr = new StringBuilder(name);
+		for (String arg : args) {
+			cmdStr.append(" \"");
+			cmdStr.append(arg);
+			cmdStr.append("\"");
+		}
 		cmdStr.append(" ");
-		cmdStr.append(String.join(" ", args));
 		
 		return cmdStr.toString();
 	}

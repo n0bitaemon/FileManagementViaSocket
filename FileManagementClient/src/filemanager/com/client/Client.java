@@ -21,6 +21,12 @@ import filemanager.com.client.common.Utils;
 import filemanager.com.client.exception.ClientException;
 import filemanager.com.client.exception.InvalidCommandException;
 
+/**
+ * The Client is used to communicate with the Server
+ * 
+ * @author triet
+ *
+ */
 public class Client implements AutoCloseable {
 	private static final Logger LOGGER = LogManager.getLogger(Client.class);
 	
@@ -35,7 +41,7 @@ public class Client implements AutoCloseable {
 		LOGGER.info("Connected to server at {}: {}", host, port);
 	}
 
-	public void send(String message) throws IOException, NotYetConnectedException {
+	public void send(String message) throws IOException {
 		// Send request
 		buffer.clear();
 		try {
@@ -66,7 +72,7 @@ public class Client implements AutoCloseable {
 		LOGGER.info(Constants.MSG_DISCONNECTED);
 	}
 
-	public void loop() throws ClientException {
+	public void loop() {
 		Scanner sc = new Scanner(System.in);
 		String cmdStr;
 		Response response = new Response();
@@ -75,6 +81,19 @@ public class Client implements AutoCloseable {
 			response.setResponse(false, "");
 			cmdStr = sc.nextLine();
 			System.out.println(">>> " + cmdStr);
+
+			if(cmdStr.equals("exit")) {
+				try {
+					disconnect();
+					System.out.println("Client shut down");
+					break;
+				} catch (IOException e) {
+					if(Environments.DEBUG_MODE) {
+						e.printStackTrace();
+					}
+					response.setResponse(false, "Cannot disconnect to server");
+				}
+			}
 			
 			if(cmdStr.equals("help")) {
 				Utils.showHelpMenu();
@@ -140,13 +159,21 @@ public class Client implements AutoCloseable {
 					if(Environments.DEBUG_MODE) {
 						e.printStackTrace();
 					}
-					response.setResponse(false, Constants.ERR_UNEXPECTED);
+					response.setResponse(false, Constants.ERR_CANNOT_REACH_SERVER);
 				}
 				
 				// If server validation success, continue sending packet
 				if(response.getStatus()) {
 					String sourceRaw = cmd.getArgs().get(0);
-					response = download(sourceRaw, dest);
+					try {
+						response = download(sourceRaw, dest);
+					} catch (ClientException e) {
+						if(Environments.DEBUG_MODE) {
+							e.printStackTrace();
+						}
+						System.out.println("Error while downloading file");
+						continue;
+					}
 				}else if(cmd.getName().equals("upload")) {
 					response.setResponse(true, "Uploaded");
 				}else {
@@ -197,13 +224,21 @@ public class Client implements AutoCloseable {
 					if(Environments.DEBUG_MODE) {
 						e.printStackTrace();
 					}
-					response.setResponse(false, Constants.ERR_UNEXPECTED);
+					response.setResponse(false, Constants.ERR_CANNOT_REACH_SERVER);
 				}
 				
 				
 				// If the validation step success, start uploading
 				if(response.getStatus()) {
-					response = upload(source);
+					try {
+						response = upload(source);
+					} catch (ClientException e) {
+						if(Environments.DEBUG_MODE) {
+							e.printStackTrace();
+						}
+						System.out.println("Error while uploading file");
+						continue;
+					}
 				}
 				
 			}else {
@@ -224,15 +259,12 @@ public class Client implements AutoCloseable {
 					if(Environments.DEBUG_MODE) {
 						e.printStackTrace();
 					}
-					response.setResponse(false, Constants.ERR_UNEXPECTED);
+					response.setResponse(false, Constants.ERR_CANNOT_REACH_SERVER);
 				}
 			}
 			
 			System.out.println(response);
 			
-			if(cmd.getName().equals("exit")) {
-				break;
-			}
 		}
 
 		sc.close();
@@ -264,6 +296,9 @@ public class Client implements AutoCloseable {
 			
 			return response;
 		} catch (IOException e) {
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
 			throw new ClientException();
 		}
 	}

@@ -19,6 +19,11 @@ import filemanager.com.server.common.Environments;
 import filemanager.com.server.exception.InvalidCommandException;
 import filemanager.com.server.exception.ServerException;
 
+/**
+ * The server accept and listen for incoming request from client
+ * @author triet
+ *
+ */
 public class Server implements AutoCloseable {
 	private static final Logger LOGGER = LogManager.getLogger(Server.class);
 	
@@ -42,18 +47,28 @@ public class Server implements AutoCloseable {
 			Iterator<SelectionKey> keyIterator = selector.selectedKeys().iterator();
 			while (keyIterator.hasNext()) {
 				SelectionKey key = keyIterator.next();
-				keyIterator.remove();
-				if (!key.isValid()) {
+				try {
+					keyIterator.remove();
+					if (!key.isValid()) {
+						continue;
+					}
+					if (key.isAcceptable()) {
+						accept(key);
+					} else if (key.isReadable()) {
+						read(key);
+					} else if (key.isWritable()) {
+						String request = (String) key.attachment();
+						Response response = getResponse(request, key);
+						if(response == null)
+							continue;
+						write(key, response);
+					}
+				} catch(Exception e) {
+					if(Environments.DEBUG_MODE) {
+						e.printStackTrace();
+					}
+					disconnect(key);
 					continue;
-				}
-				if (key.isAcceptable()) {
-					accept(key);
-				} else if (key.isReadable()) {
-					read(key);
-				} else if (key.isWritable()) {
-					String request = (String) key.attachment();
-					Response response = getResponse(request, key);
-					write(key, response);
 				}
 			}
 		}
@@ -145,6 +160,16 @@ public class Server implements AutoCloseable {
 	 * @return Response
 	 */
 	private Response getResponse(String req, SelectionKey key) {
+		if(req.equals("exit")) {
+			try {
+				disconnect(key);
+			} catch (IOException e) {
+				if(Environments.DEBUG_MODE) {
+					e.printStackTrace();
+				}
+			}
+			return null;
+		}
 		SocketChannel socketChannel = (SocketChannel) key.channel();
 		SocketAddress remoteAddress;
 		try {

@@ -26,7 +26,7 @@ import filemanager.com.server.exception.ServerException;
  * Arguments: <br>
  * - dirname: new directory name
  * 
- * @author n0bita-windows
+ * @author Triet
  *
  */
 public class MakeDirCommand extends AuthCommand {

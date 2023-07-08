@@ -29,7 +29,7 @@ import filemanager.com.server.exception.ServerException;
  * Syntax: ls [{@literal <}path>] <br>
  * Arguments:
  * - path (optional): path on user's server storage
- * @author n0bita-windows
+ * @author Triet
  *
  */
 public class ListFileCommand extends AuthCommand {

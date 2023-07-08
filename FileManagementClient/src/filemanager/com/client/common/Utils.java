@@ -7,6 +7,11 @@ import java.text.Normalizer.Form;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+/**
+ * A list of commom methods that will be used in other places
+ * @author triet
+ *
+ */
 public class Utils {
 	private Utils() {}
 	

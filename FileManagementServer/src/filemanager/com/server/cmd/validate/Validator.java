@@ -8,7 +8,7 @@ import filemanager.com.server.common.Utils;
 /**
  * Common validators
  * 
- * @author n0bita-windows
+ * @author Triet
  *
  */
 public class Validator {

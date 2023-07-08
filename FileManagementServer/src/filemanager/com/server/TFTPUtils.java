@@ -13,7 +13,7 @@ import filemanager.com.server.exception.ServerException;
 
 /**
  * Provides methods to run TFTP protocol
- * @author n0bita-windows
+ * @author triet
  *
  */
 public class TFTPUtils {

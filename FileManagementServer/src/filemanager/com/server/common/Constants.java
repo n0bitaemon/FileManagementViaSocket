@@ -2,7 +2,7 @@ package filemanager.com.server.common;
 
 /**
  * Common constants that will be used by other classes
- * @author n0bita-windows
+ * @author Triet
  *
  */
 public class Constants {

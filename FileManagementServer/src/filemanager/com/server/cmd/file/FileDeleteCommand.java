@@ -29,7 +29,7 @@ import filemanager.com.server.exception.ServerException;
  * Arguments: <br>
  * - path: a existed file or directory on user's server storage.
  * 
- * @author n0bita-windows
+ * @author Triet
  *
  */
 public class FileDeleteCommand extends AuthCommand {

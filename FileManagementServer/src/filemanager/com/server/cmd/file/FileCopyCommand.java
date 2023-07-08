@@ -28,7 +28,7 @@ import filemanager.com.server.exception.ServerException;
  * - source: existed file/folder on user's server storage <br>
  * - dest: new file/folder on user's server storage
  * 
- * @author n0bita-windows
+ * @author Triet
  *
  */
 public class FileCopyCommand extends AuthCommand {

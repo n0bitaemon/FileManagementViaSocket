@@ -31,7 +31,7 @@ import filemanager.com.server.exception.ServerException;
  * validate() method is used to check whether the command is valid, 
  * and the exec() method will execute the command after validation step.
  * 
- * @author Minh Triet
+ * @author Triet
  */
 public abstract class Command {
 
@@ -140,5 +140,6 @@ public abstract class Command {
 
 		return cmd;
 	}
+	
 	
 }

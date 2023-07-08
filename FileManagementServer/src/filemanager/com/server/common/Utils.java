@@ -15,7 +15,7 @@ import filemanager.com.server.exception.InvalidCommandException;
 
 /**
  * Common utility functions that will be used by other classes
- * @author n0bita-windows
+ * @author Triet
  *
  */
 public class Utils {

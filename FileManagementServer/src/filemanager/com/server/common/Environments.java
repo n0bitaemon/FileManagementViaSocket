@@ -2,7 +2,7 @@ package filemanager.com.server.common;
 
 /**
  * Environment variables
- * @author n0bita-windows
+ * @author Triet
  *
  */
 public class Environments {
@@ -10,5 +10,5 @@ public class Environments {
 		
 	}
 
-	public static final boolean DEBUG_MODE = false;
+	public static final boolean DEBUG_MODE = true;
 }

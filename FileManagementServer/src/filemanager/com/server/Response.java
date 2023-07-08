@@ -3,7 +3,7 @@ package filemanager.com.server;
 /**
  * A response from server
  * <br>
- * @author n0bita-windows
+ * @author triet
  *
  */
 public class Response {

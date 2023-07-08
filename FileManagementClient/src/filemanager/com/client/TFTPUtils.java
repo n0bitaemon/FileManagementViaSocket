@@ -9,6 +9,11 @@ import java.nio.channels.SocketChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * Provide methods to implement TFTP protocol
+ * @author triet
+ *
+ */
 public class TFTPUtils {
 	public static final int BUFSIZE = 516;
 	

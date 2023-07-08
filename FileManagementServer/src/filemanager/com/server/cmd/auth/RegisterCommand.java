@@ -12,6 +12,7 @@ import filemanager.com.server.auth.Authentication;
 import filemanager.com.server.cmd.Command;
 import filemanager.com.server.cmd.validate.Validator;
 import filemanager.com.server.common.Constants;
+import filemanager.com.server.common.Environments;
 import filemanager.com.server.common.Utils;
 import filemanager.com.server.exception.InvalidNumberOfArgsException;
 import filemanager.com.server.exception.InvalidUsernameException;
@@ -31,7 +32,7 @@ import filemanager.com.server.exception.UserAlreadyLoginException;
  *
  */
 public class RegisterCommand extends Command {
-	private static final Logger LOGGER = LogManager.getLogger(LoginCommand.class);
+	private static final Logger LOGGER = LogManager.getLogger(RegisterCommand.class);
 	
 	@Override
 	public boolean validate() throws ServerException {
@@ -55,7 +56,10 @@ public class RegisterCommand extends Command {
 				throw new UserAlreadyExistException(username);
 			}
 		}catch (Exception e) {
-			throw new ServerException();
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
+			throw new ServerException(e.getMessage());
 		}
 		
 		if (!username.matches("[a-zA-Z0-9]+")) {
@@ -86,6 +90,9 @@ public class RegisterCommand extends Command {
 		try {
 			Files.createDirectories(path);
 		} catch (IOException e) {
+			if(Environments.DEBUG_MODE) {
+				e.printStackTrace();
+			}
 			throw new ServerException();
 		}
 		

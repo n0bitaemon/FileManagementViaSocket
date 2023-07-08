@@ -30,7 +30,7 @@ import filemanager.com.server.exception.ServerException;
  * - source: a file on local storage <br>
  * - dest: a new file on user's server storage
  * 
- * @author n0bita-windows
+ * @author Triet
  *
  */
 public class FileUploadCommand extends AuthCommand {

@@ -1,5 +1,10 @@
 package filemanager.com.client;
 
+/**A response from server
+ * 
+ * @author triet
+ *
+ */
 public class Response {
 	private boolean status;
 	private String message;
